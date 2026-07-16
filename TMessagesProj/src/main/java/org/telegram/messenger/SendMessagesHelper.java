@@ -29,6 +29,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -2024,6 +2026,55 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         }
     }
 
+    public static final int VORTEX_FORWARD_BATCH_LIMIT = 30;
+    public static final long VORTEX_FORWARD_BATCH_DELAY_MS = 30_000L;
+
+    // VortexGram: sends `messages` in batches of VORTEX_FORWARD_BATCH_LIMIT, waiting
+    // VORTEX_FORWARD_BATCH_DELAY_MS between batches, and reports progress via Toast.
+    private void vortexBatchForward(
+        ArrayList<MessageObject> messages,
+        final long peer,
+        boolean forwardFromMyName,
+        boolean hideCaption,
+        boolean notify,
+        int scheduleDate,
+        int scheduleRepeatPeriod,
+        MessageObject replyToTopMsg,
+        int video_timestamp,
+        long payStars,
+        long monoForumPeerId,
+        MessageSuggestionParams suggestionParams
+    ) {
+        int total = messages.size();
+        int totalBatches = (int) Math.ceil(total / (double) VORTEX_FORWARD_BATCH_LIMIT);
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        String initMsg = totalBatches == 1
+                ? "שולח " + total + " הודעות..."
+                : "שולח " + total + " הודעות | " + totalBatches + " נגלות, 30 שניות בין כל נגלה";
+        handler.post(() -> Toast.makeText(ApplicationLoader.applicationContext, initMsg, Toast.LENGTH_LONG).show());
+
+        for (int i = 0; i < total; i += VORTEX_FORWARD_BATCH_LIMIT) {
+            final int batchNum = (i / VORTEX_FORWARD_BATCH_LIMIT) + 1;
+            final ArrayList<MessageObject> batch = new ArrayList<>(
+                    messages.subList(i, Math.min(i + VORTEX_FORWARD_BATCH_LIMIT, total)));
+            final int sentAfter = Math.min(i + VORTEX_FORWARD_BATCH_LIMIT, total);
+            final long delayMs = (long) (batchNum - 1) * VORTEX_FORWARD_BATCH_DELAY_MS;
+
+            handler.postDelayed(() -> {
+                String progress = "נגלה " + batchNum + "/" + totalBatches + " — שולח " + batch.size() + " הודעות";
+                Toast.makeText(ApplicationLoader.applicationContext, progress, Toast.LENGTH_SHORT).show();
+
+                sendMessage(batch, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams);
+
+                String done = batchNum == totalBatches
+                        ? "הכל נשלח ✓  " + total + "/" + total
+                        : "נגלה " + batchNum + "/" + totalBatches + " הושלמה — " + sentAfter + "/" + total;
+                Toast.makeText(ApplicationLoader.applicationContext, done, Toast.LENGTH_LONG).show();
+            }, delayMs);
+        }
+    }
+
     public int sendMessage(ArrayList<MessageObject> messages, final long peer, boolean forwardFromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars) {
         return sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, null, -1, payStars);
     }
@@ -2047,6 +2098,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         MessageSuggestionParams suggestionParams
     ) {
         if (messages == null || messages.isEmpty()) {
+            return 0;
+        }
+        // VortexGram: forwards larger than VORTEX_FORWARD_BATCH_LIMIT are rate-limited into
+        // delayed batches instead of being sent (and rejected/flooded) all at once.
+        if (messages.size() > VORTEX_FORWARD_BATCH_LIMIT) {
+            vortexBatchForward(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams);
             return 0;
         }
         int sendResult = 0;
