@@ -21,6 +21,8 @@ import static org.telegram.ui.Stars.StarGiftSheet.replaceUnderstood;
 import static org.telegram.ui.Stars.StarsIntroActivity.formatStarsAmountShort;
 import static org.telegram.ui.bots.AffiliateProgramFragment.percents;
 
+import com.radolyn.ayugram.ui.preferences.VortexGramPreferencesActivity;
+
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -623,6 +625,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int privacyRow;
     private int dataRow;
     private int chatRow;
+    private int vortexRow;
     private int filtersRow;
     private int liteModeRow;
     private int stickersRow;
@@ -4496,6 +4499,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 presentFragment(new DataSettingsActivity());
             } else if (position == chatRow) {
                 presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC));
+            } else if (position == vortexRow) {
+                presentFragment(new VortexGramPreferencesActivity());
             } else if (position == filtersRow) {
                 presentFragment(new FiltersSetupActivity());
             } else if (position == stickersRow) {
@@ -10389,6 +10394,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         privacyRow = -1;
         dataRow = -1;
         chatRow = -1;
+        vortexRow = -1;
         filtersRow = -1;
         liteModeRow = -1;
         stickersRow = -1;
@@ -10547,6 +10553,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
 
                 settingsSectionRow2 = rowCount++;
+                vortexRow = rowCount++;
                 chatRow = rowCount++;
                 privacyRow = rowCount++;
                 notificationRow = rowCount++;
@@ -13701,6 +13708,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setTextAndIcon(LocaleController.getString(R.string.DataSettings), R.drawable.msg2_data, true);
                     } else if (position == chatRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.ChatSettings), R.drawable.msg2_discussion, true);
+                    } else if (position == vortexRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("AyuPreferences", R.string.AyuPreferences), R.drawable.msg2_reactions2, true);
                     } else if (position == filtersRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.Filters), R.drawable.msg2_folder, true);
                     } else if (position == stickersRow) {
@@ -14140,7 +14149,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 int position = holder.getAdapterPosition();
                 return position == notificationRow || position == numberRow || position == privacyRow ||
                         position == languageRow || position == setUsernameRow || position == bioRow ||
-                        position == versionRow || position == dataRow || position == chatRow ||
+                        position == versionRow || position == dataRow || position == chatRow || position == vortexRow ||
                         position == questionRow || position == devicesRow || position == filtersRow || position == stickersRow ||
                         position == faqRow || position == policyRow || position == sendLogsRow || position == sendLastLogsRow ||
                         position == clearLogsRow || position == switchBackendRow || position == setAvatarRow ||
@@ -14186,7 +14195,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     position == subscribersRow || position == subscribersRequestsRow || position == administratorsRow || position == settingsRow || position == blockedUsersRow ||
                     position == addMemberRow || position == joinRow || position == unblockRow ||
                     position == sendMessageRow || position == notificationRow || position == privacyRow ||
-                    position == languageRow || position == dataRow || position == chatRow ||
+                    position == languageRow || position == dataRow || position == chatRow || position == vortexRow ||
                     position == questionRow || position == devicesRow || position == filtersRow || position == stickersRow ||
                     position == faqRow || position == policyRow || position == sendLogsRow || position == sendLastLogsRow ||
                     position == clearLogsRow || position == switchBackendRow || position == setAvatarRow || position == addToGroupButtonRow ||

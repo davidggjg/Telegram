@@ -132,6 +132,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.zxing.common.detector.MathUtils;
+import com.radolyn.ayugram.AyuConfig;
+import com.radolyn.ayugram.AyuFilter;
+import com.radolyn.ayugram.ui.DummyView;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -37104,6 +37107,9 @@ public class ChatActivity extends BaseFragment implements
                         return ChatActivity.this.getSideMenuWidth();
                     }
                 };
+            } else if (viewType == -1000) {
+                // VortexGram: filtered-out message, rendered as a 1px stand-in
+                view = new DummyView(mContext);
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
@@ -37693,6 +37699,8 @@ public class ChatActivity extends BaseFragment implements
                     if (createUnreadMessageAfterId != 0) {
                         createUnreadMessageAfterId = 0;
                     }
+                } else if (view instanceof DummyView) {
+                    ((DummyView) view).setMessageObject(message);
                 }
             }
         }
@@ -37716,7 +37724,18 @@ public class ChatActivity extends BaseFragment implements
                 } else {
                     messages = ChatActivity.this.messages;
                 }
-                return messages.get(position - messagesStartRow).contentType;
+                var msg = messages.get(position - messagesStartRow);
+
+                // VortexGram: hide messages matched by a user-defined regex filter
+                if (AyuConfig.regexFiltersEnabled && (AyuConfig.regexFiltersInChats || ChatObject.isChannel(currentChat))) {
+                    var group = getGroup(msg.getGroupId());
+                    var msgToCheck = group == null ? msg : group.findPrimaryMessageObject();
+                    if (AyuFilter.isFiltered(msgToCheck, group)) {
+                        return -1000;
+                    }
+                }
+
+                return msg.contentType;
             } else if (position == botInfoRow) {
                 return 3;
             } else if (position == userInfoRow) {

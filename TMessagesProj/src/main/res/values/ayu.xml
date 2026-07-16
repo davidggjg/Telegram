@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="AyuPreferences">VortexGram Preferences</string>
+
+  <string name="SpyEssentialsHeader">Spy essentials</string>
+  <string name="SaveDeletedMessages">Save deleted messages</string>
+  <string name="SaveMessagesHistory">Save edits history</string>
+
+  <string name="MessageSavingBtn">Message Saving Preferences</string>
+  <string name="MessageSavingSaveMedia">Save media</string>
+  <string name="MessageSavingSaveMediaHint">Click for more</string>
+  <string name="MessageSavingSaveMediaInPrivateChats">…in private chats</string>
+  <string name="MessageSavingSaveMediaInPublicChannels">…in public channels</string>
+  <string name="MessageSavingSaveMediaInPrivateChannels">…in private channels</string>
+  <string name="MessageSavingSaveMediaInPublicGroups">…in public groups</string>
+  <string name="MessageSavingSaveMediaInPrivateGroups">…in private groups</string>
+  <string name="MessageSavingSaveFormatting">Save formatting</string>
+  <string name="MessageSavingSaveReactions">Save reactions</string>
+  <string name="MessageSavingSaveForBots">Save in bot dialogs</string>
+
+  <string name="QoLTogglesHeader">Useful features</string>
+  <string name="KeepAliveService">VortexGram Push Service</string>
+  <string name="DisableAds">Disable ads</string>
+  <string name="LocalPremium">Local Telegram Premium</string>
+  <string name="AntiKick">Anti-kick (stay in chat when removed)</string>
+
+  <string name="CustomizationHeader">Customization</string>
+  <string name="DeletedMarkText">Deleted mark</string>
+  <string name="EditedMarkText">Edited mark</string>
+
+  <string name="RegexFilters">Message Filters</string>
+  <string name="RegexFiltersAmount">filters</string>
+  <string name="RegexFiltersHeader">Filters</string>
+  <string name="RegexFiltersEnableInChats">Enable in chats</string>
+  <string name="RegexFiltersCaseInsensitive">Case insensitive expressions</string>
+  <string name="RegexFiltersAdd">Add filter</string>
+  <string name="RegexFiltersEdit">Edit filter</string>
+  <string name="RegexFiltersAddDescription">You can use site <![CDATA[<a href="https://regex101.com">regex101.com</a>]]> to fully test your regular expression.
+    You can also use plain text, but don\'t forget to escape brackets.</string>
+  <string name="RegexFiltersAddError">Regex syntax error</string>
+
+  <string name="WALMode">Enable WAL mode</string>
+  <string name="ClearAyuDatabase">Clear VortexGram Database</string>
+  <string name="ClearAyuDatabaseNotification">VortexGram database cleared</string>
+
+  <string name="RestartRequired">Restart the App to take effect.</string>
+</resources>
