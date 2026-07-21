@@ -5721,6 +5721,12 @@
     <string name="AppIconPremium">Premium</string>
     <string name="AppIconTurbo">Turbo</string>
     <string name="AppIconNox">Nox</string>
+    <string name="AppIconVortexBlue">Vortex Blue</string>
+    <string name="AppIconVortexGlass">Vortex Glass</string>
+    <string name="AppIconVortexGold">Vortex Gold</string>
+    <string name="AppIconVortexPurple">Vortex Purple</string>
+    <string name="AppIconVortexNeon">Vortex Neon</string>
+    <string name="AppIconVortexMono">Vortex VG</string>
     <string name="AppIconChangedTo">App icon has been changed to %1$s</string>
     <string name="FileTooLarge">File Too Large</string>
     <string name="PremiumPreviewAppIcon">Premium App Icon</string>

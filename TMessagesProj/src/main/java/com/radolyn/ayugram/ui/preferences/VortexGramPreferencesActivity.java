@@ -90,7 +90,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     }
 
     private void toggleLocalPremium() {
-        var newState = !AyuConfig.localPremium;
+        boolean newState = !AyuConfig.localPremium;
 
         AyuConfig.editor.putBoolean("localPremium", AyuConfig.localPremium = newState).apply();
         listAdapter.notifyItemChanged(localPremiumRow, AyuConfig.localPremium);
@@ -194,8 +194,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == editedMarkTextRow) {
                         textCell.setTextAndValue(LocaleController.getString(R.string.EditedMarkText), AyuConfig.getEditedMark(), true);
                     } else if (position == clearAyuDatabaseBtnRow) {
-                        var file = ApplicationLoader.applicationContext.getDatabasePath(AyuConstants.AYU_DATABASE);
-                        var size = file.exists() ? file.length() : 0;
+                        java.io.File file = ApplicationLoader.applicationContext.getDatabasePath(AyuConstants.AYU_DATABASE);
+                        long size = file.exists() ? file.length() : 0;
 
                         textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ClearAyuDatabase), AndroidUtilities.formatFileSize(size), R.drawable.msg_delete, false);
                         textCell.setColors(Theme.key_text_RedBold, Theme.key_text_RedBold);
@@ -235,7 +235,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                 case TOGGLE_BUTTON_VIEW:
                     NotificationsCheckCell notificationsCheckCell = (NotificationsCheckCell) holder.itemView;
                     if (position == filtersRow) {
-                        var count = AyuConfig.getRegexFilters().size();
+                        int count = AyuConfig.getRegexFilters().size();
                         notificationsCheckCell.setTextAndValueAndCheck(LocaleController.getString(R.string.RegexFilters), count + " " + LocaleController.getString(R.string.RegexFiltersAmount), AyuConfig.regexFiltersEnabled, false);
                     }
                     break;
@@ -246,7 +246,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == TOGGLE_BUTTON_VIEW) {
-                var view = new NotificationsCheckCell(mContext);
+                NotificationsCheckCell view = new NotificationsCheckCell(mContext);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                 return new RecyclerListView.Holder(view);
             }

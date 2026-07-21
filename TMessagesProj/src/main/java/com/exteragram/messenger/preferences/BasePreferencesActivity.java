@@ -168,7 +168,9 @@ public abstract class BasePreferencesActivity extends BaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            onBindViewHolder(holder, position, payload.equals(holder.getPayload()));
+            // VortexGram: this base's ViewHolder.getPayload() isn't available here, so every
+            // bind is treated as a full bind (no partial-update fast path).
+            onBindViewHolder(holder, position, false);
         }
 
         @NonNull

@@ -16,6 +16,7 @@ import com.radolyn.ayugram.ui.preferences.RegexFiltersPreferencesActivity;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
+import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
@@ -26,9 +27,9 @@ public class RegexFilterPopup {
             return;
         }
 
-        var layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(fragment.getContext());
-        var popupWindow = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
-        var windowLayout = createPopupLayout(layout, popupWindow, fragment, filterIdx);
+        ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(fragment.getContext());
+        ActionBarPopupWindow popupWindow = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
+        ActionBarPopupWindow.ActionBarPopupWindowLayout windowLayout = createPopupLayout(layout, popupWindow, fragment, filterIdx);
 
         popupWindow.setPauseNotifications(true);
         popupWindow.setDismissAnimationDuration(220);
@@ -59,19 +60,19 @@ public class RegexFilterPopup {
     private static ActionBarPopupWindow.ActionBarPopupWindowLayout createPopupLayout(ActionBarPopupWindow.ActionBarPopupWindowLayout layout, ActionBarPopupWindow popupWindow, RegexFiltersPreferencesActivity fragment, int filterIdx) {
         layout.setFitItems(true);
 
-        var editBtn = ActionBarMenuItem.addItem(layout, R.drawable.msg_edit, "Edit", false, fragment.getResourceProvider());
+        ActionBarMenuSubItem editBtn = ActionBarMenuItem.addItem(layout, R.drawable.msg_edit, "Edit", false, fragment.getResourceProvider());
         editBtn.setOnClickListener(view -> {
             fragment.presentFragment(new RegexFilterEditActivity(filterIdx));
             popupWindow.dismiss();
         });
 
-        var deleteBtn = ActionBarMenuItem.addItem(layout, R.drawable.msg_delete, "Delete", false, fragment.getResourceProvider());
+        ActionBarMenuSubItem deleteBtn = ActionBarMenuItem.addItem(layout, R.drawable.msg_delete, "Delete", false, fragment.getResourceProvider());
         deleteBtn.setOnClickListener(view -> {
             AyuConfig.removeFilter(filterIdx);
             fragment.onResume();
             popupWindow.dismiss();
         });
-        var deleteBtnColor = Theme.getColor(Theme.key_text_RedBold);
+        int deleteBtnColor = Theme.getColor(Theme.key_text_RedBold);
         deleteBtn.setColors(deleteBtnColor, deleteBtnColor);
 
         return layout;

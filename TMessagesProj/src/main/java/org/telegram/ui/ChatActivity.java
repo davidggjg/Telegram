@@ -37724,12 +37724,12 @@ public class ChatActivity extends BaseFragment implements
                 } else {
                     messages = ChatActivity.this.messages;
                 }
-                var msg = messages.get(position - messagesStartRow);
+                MessageObject msg = messages.get(position - messagesStartRow);
 
                 // VortexGram: hide messages matched by a user-defined regex filter
                 if (AyuConfig.regexFiltersEnabled && (AyuConfig.regexFiltersInChats || ChatObject.isChannel(currentChat))) {
-                    var group = getGroup(msg.getGroupId());
-                    var msgToCheck = group == null ? msg : group.findPrimaryMessageObject();
+                    MessageObject.GroupedMessages group = getGroup(msg.getGroupId());
+                    MessageObject msgToCheck = group == null ? msg : group.findPrimaryMessageObject();
                     if (AyuFilter.isFiltered(msgToCheck, group)) {
                         return -1000;
                     }

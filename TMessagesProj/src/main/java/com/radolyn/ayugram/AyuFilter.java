@@ -22,15 +22,15 @@ public class AyuFilter {
     private static LongSparseArray<HashMap<Integer, Boolean>> filteredCache;
 
     public static void rebuildCache() {
-        var filters = AyuConfig.getRegexFilters();
+        ArrayList<String> filters = AyuConfig.getRegexFilters();
 
-        var flags = Pattern.MULTILINE;
+        int flags = Pattern.MULTILINE;
         if (AyuConfig.regexFiltersCaseInsensitive) {
             flags |= Pattern.CASE_INSENSITIVE;
         }
 
         patterns = new ArrayList<>();
-        for (var filter : filters) {
+        for (String filter : filters) {
             patterns.add(Pattern.compile(filter, flags));
         }
 
@@ -46,7 +46,7 @@ public class AyuFilter {
             return false;
         }
 
-        for (var pattern : patterns) {
+        for (Pattern pattern : patterns) {
             if (pattern.matcher(text).find()) {
                 return true;
             }
@@ -70,7 +70,7 @@ public class AyuFilter {
 
         Boolean res;
 
-        var cached = filteredCache.get(msg.getDialogId());
+        HashMap<Integer, Boolean> cached = filteredCache.get(msg.getDialogId());
         if (cached != null) {
             res = cached.get(msg.getId());
             if (res != null) {
@@ -89,7 +89,7 @@ public class AyuFilter {
         cached.put(msg.getId(), res);
 
         if (group != null && group.messages != null && !group.messages.isEmpty()) {
-            for (var m : group.messages) {
+            for (MessageObject m : group.messages) {
                 cached.put(m.getId(), res);
             }
         }

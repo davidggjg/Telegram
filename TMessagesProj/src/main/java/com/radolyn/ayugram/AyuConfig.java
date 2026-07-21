@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import org.telegram.messenger.*;
+import org.telegram.tgnet.TLRPC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +100,7 @@ public class AyuConfig {
             return false;
         }
 
-        var user = MessagesController.getInstance(accountId).getUser(Math.abs(dialogId));
+        TLRPC.User user = MessagesController.getInstance(accountId).getUser(Math.abs(dialogId));
         if (user == null) {
             return true;
         }
@@ -112,7 +113,7 @@ public class AyuConfig {
             return false;
         }
 
-        var user = MessagesController.getInstance(accountId).getUser(Math.abs(dialogId));
+        TLRPC.User user = MessagesController.getInstance(accountId).getUser(Math.abs(dialogId));
         if (user == null) {
             return true;
         }
@@ -129,37 +130,37 @@ public class AyuConfig {
     }
 
     public static ArrayList<String> getRegexFilters() {
-        var str = preferences.getString("regexFilters", "[]");
-        var arr = new Gson().fromJson(str, String[].class);
+        String str = preferences.getString("regexFilters", "[]");
+        String[] arr = new Gson().fromJson(str, String[].class);
 
         return new ArrayList<>(Arrays.asList(arr));
     }
 
     public static void addFilter(String text) {
-        var list = getRegexFilters();
+        ArrayList<String> list = getRegexFilters();
         list.add(0, text);
 
-        var str = new Gson().toJson(list);
+        String str = new Gson().toJson(list);
         editor.putString("regexFilters", str).apply();
 
         AyuFilter.rebuildCache();
     }
 
     public static void editFilter(int filterIdx, String text) {
-        var list = getRegexFilters();
+        ArrayList<String> list = getRegexFilters();
         list.set(filterIdx, text);
 
-        var str = new Gson().toJson(list);
+        String str = new Gson().toJson(list);
         editor.putString("regexFilters", str).apply();
 
         AyuFilter.rebuildCache();
     }
 
     public static void removeFilter(int filterIdx) {
-        var list = getRegexFilters();
+        ArrayList<String> list = getRegexFilters();
         list.remove(filterIdx);
 
-        var str = new Gson().toJson(list);
+        String str = new Gson().toJson(list);
         editor.putString("regexFilters", str).apply();
 
         AyuFilter.rebuildCache();

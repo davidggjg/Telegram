@@ -72,7 +72,7 @@ public class RegexFilterEditActivity extends BaseFragment {
                 if (id == -1) {
                     finishFragment();
                 } else if (id == done_button) {
-                    var text = editField.getText().toString();
+                    String text = editField.getText().toString();
 
                     if (TextUtils.isEmpty(text)) {
                         return;
@@ -81,7 +81,7 @@ public class RegexFilterEditActivity extends BaseFragment {
                     try {
                         Pattern.compile(text);
                     } catch (PatternSyntaxException e) {
-                        var errorText = e.getMessage();
+                        String errorText = e.getMessage();
                         if (!TextUtils.isEmpty(errorText)) {
                             errorText = errorText.replace(text, "");
                         }

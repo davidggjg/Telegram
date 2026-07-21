@@ -58,7 +58,7 @@ public class RegexFiltersPreferencesActivity extends BasePreferencesActivity {
         filtersHeaderRow = -1;
 
         filters = AyuConfig.getRegexFilters();
-        var count = filters.size();
+        int count = filters.size();
 
         if (count != 0) {
             filtersHeaderRow = newRow();
@@ -116,7 +116,7 @@ public class RegexFiltersPreferencesActivity extends BasePreferencesActivity {
                 case 2:
                     TextCell textCell = (TextCell) holder.itemView;
                     if (position > filtersHeaderRow && filtersHeaderRow != -1) {
-                        var dividerNeeded = position != filtersHeaderRow + filters.size();
+                        boolean dividerNeeded = position != filtersHeaderRow + filters.size();
                         textCell.setText(filters.get(position - filtersHeaderRow - 1), dividerNeeded);
                     } else if (position == addFilterBtnRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.RegexFiltersAdd), R.drawable.msg_add, false);

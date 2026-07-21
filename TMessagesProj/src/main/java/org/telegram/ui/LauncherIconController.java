@@ -39,7 +39,13 @@ public class LauncherIconController {
         AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
         PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground_sa, R.string.AppIconPremium, true),
         TURBO("TurboIcon", R.drawable.icon_5_background_sa, R.mipmap.icon_5_foreground_sa, R.string.AppIconTurbo, true),
-        NOX("NoxIcon", R.mipmap.icon_2_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconNox, true);
+        NOX("NoxIcon", R.mipmap.icon_2_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconNox, true),
+        VORTEX_BLUE("VortexBlueIcon", R.drawable.icon_7_background_sa, R.mipmap.icon_7_foreground_sa, R.string.AppIconVortexBlue),
+        VORTEX_GLASS("VortexGlassIcon", R.drawable.icon_8_background_sa, R.mipmap.icon_8_foreground_sa, R.string.AppIconVortexGlass),
+        VORTEX_GOLD("VortexGoldIcon", R.drawable.icon_9_background_sa, R.mipmap.icon_9_foreground_sa, R.string.AppIconVortexGold),
+        VORTEX_PURPLE("VortexPurpleIcon", R.drawable.icon_10_background_sa, R.mipmap.icon_10_foreground_sa, R.string.AppIconVortexPurple),
+        VORTEX_NEON("VortexNeonIcon", R.drawable.icon_11_background_sa, R.mipmap.icon_11_foreground_sa, R.string.AppIconVortexNeon),
+        VORTEX_MONO("VortexMonoIcon", R.drawable.icon_12_background_sa, R.mipmap.icon_12_foreground_sa, R.string.AppIconVortexMono);
 
         public final String key;
         public final int background;

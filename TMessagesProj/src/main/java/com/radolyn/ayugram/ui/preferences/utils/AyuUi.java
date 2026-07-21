@@ -49,17 +49,17 @@ public class AyuUi {
     }
 
     public static void spawnEditBox(Activity parent, TextCell view, String title, Supplier<String> getter, String configField, String defaultValue, Consumer<String> callback, Function<String, String> map) {
-        var builder = new AlertDialog.Builder(parent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(parent);
         builder.setTitle(title);
-        var layout = new LinearLayout(parent);
-        var input = new EditTextSettingsCell(parent);
+        LinearLayout layout = new LinearLayout(parent);
+        EditTextSettingsCell input = new EditTextSettingsCell(parent);
         input.setText(getter.get(), true);
 
         layout.setGravity(LinearLayout.VERTICAL);
         layout.addView(input);
         builder.setView(layout);
         builder.setPositiveButton(LocaleController.getString("Save", R.string.Save), (dialog, which) -> {
-            var s = map.apply(input.getText());
+            String s = map.apply(input.getText());
 
             AyuConfig.editor.putString(configField, s).apply();
             view.setTextAndValue(title, s, true);
@@ -67,7 +67,7 @@ public class AyuUi {
         });
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), (dialog, which) -> dialog.cancel());
         builder.setNeutralButton(LocaleController.getString("Reset", R.string.Reset), (dialog, which) -> {
-            var s = map.apply(defaultValue);
+            String s = map.apply(defaultValue);
 
             AyuConfig.editor.putString(configField, s).apply();
             view.setTextAndValue(title, s, true);
