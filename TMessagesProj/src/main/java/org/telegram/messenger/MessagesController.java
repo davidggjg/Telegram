@@ -20,6 +20,8 @@ import static org.telegram.ui.Stories.HighlightMessageSheet.parseTiersString;
 import static org.telegram.ui.Stories.HighlightMessageSheet.tiersEqual;
 import static org.telegram.ui.Stories.HighlightMessageSheet.tiersToString;
 
+import com.radolyn.ayugram.AyuConfig;
+
 import android.Manifest;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -913,7 +915,8 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isPremiumUser(TLRPC.User currentUser) {
-        return currentUser != null && currentUser.premium && !isSupportUser(currentUser);
+        return currentUser != null && !isSupportUser(currentUser) &&
+                (currentUser.premium || currentUser.id == getUserConfig().getClientUserId() && AyuConfig.localPremium);
     }
 
     public boolean didPressTranscribeButtonEnough() {
