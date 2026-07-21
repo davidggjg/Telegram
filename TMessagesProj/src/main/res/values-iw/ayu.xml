@@ -2,6 +2,8 @@
 <resources>
   <!-- שם מסך ההגדרות הראשי -->
   <string name="AyuPreferences">הגדרות VortexGram</string>
+  <!-- כתובית קצרה מתחת לשם, במסך ההגדרות הראשי -->
+  <string name="AyuPreferencesInfo">פתיחת פרימיום, היסטוריית הודעות, פילטרים</string>
 
   <!-- כותרת הגדרות שמירת הודעות שנמחקו/עודכנו -->
   <string name="SpyEssentialsHeader">שמירת היסטוריה</string>

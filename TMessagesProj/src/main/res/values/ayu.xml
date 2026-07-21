@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="AyuPreferences">VortexGram Preferences</string>
+  <string name="AyuPreferencesInfo">Premium unlock, message history, filters</string>
 
   <string name="SpyEssentialsHeader">Spy essentials</string>
   <string name="SaveDeletedMessages">Save deleted messages</string>
