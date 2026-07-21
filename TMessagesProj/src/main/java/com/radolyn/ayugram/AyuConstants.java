@@ -26,4 +26,6 @@ public class AyuConstants {
     public static String DEFAULT_AYUSYNC_SERVER = BuildVars.isBetaApp() ? "ayusync-dev.radolyn.com:5000" : "ayusync.cloud";
 
     public static String AYU_DATABASE = "ayu-data";
+
+    public static String APP_NAME = "VortexGram";
 }
