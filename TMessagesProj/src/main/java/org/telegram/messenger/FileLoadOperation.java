@@ -286,15 +286,11 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-        if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
-            downloadChunkSizeBig = 1024 * 512;
-            maxDownloadRequests = 8;
-            maxDownloadRequestsBig = 8;
-        } else {
-            downloadChunkSizeBig = 1024 * 128;
-            maxDownloadRequests = 4;
-            maxDownloadRequestsBig = 4;
-        }
+        // VortexGram: always use the fastest chunk size/concurrency, regardless of the
+        // server-controlled "experimental params" flag or preloading state.
+        downloadChunkSizeBig = 1024 * 512;
+        maxDownloadRequests = 8;
+        maxDownloadRequestsBig = 8;
         maxCdnParts = (int) (FileLoader.DEFAULT_MAX_FILE_SIZE / downloadChunkSizeBig);
     }
 
