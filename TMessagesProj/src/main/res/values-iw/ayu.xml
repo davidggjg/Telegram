@@ -64,6 +64,11 @@
     אפשר גם להשתמש בטקסט רגיל, אך יש לבצע escape לסוגריים.</string>
   <string name="RegexFiltersAddError">שגיאת תחביר בביטוי רגולרי</string>
 
+  <!-- כותרת מסך היסטוריית העריכות של הודעה -->
+  <string name="EditsHistoryTitle">היסטוריית עריכות</string>
+  <!-- הטקסט בתפריט הלחיצה הארוכה על הודעה -->
+  <string name="EditsHistoryMenuText">היסטוריה</string>
+
   <!-- הפעל WAL (Write-Ahead Logging) למסד הנתונים - משפר ביצועים -->
   <string name="WALMode">הפעל מצב WAL (מאגר כתיבה)</string>
   <!-- מחק את כל מסד הנתונים של VortexGram (הודעות שנשמרו) -->

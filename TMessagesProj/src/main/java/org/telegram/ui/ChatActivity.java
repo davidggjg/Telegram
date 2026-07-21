@@ -133,7 +133,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.zxing.common.detector.MathUtils;
 import com.radolyn.ayugram.AyuConfig;
+import com.radolyn.ayugram.AyuConstants;
 import com.radolyn.ayugram.AyuFilter;
+import com.radolyn.ayugram.messages.AyuMessagesController;
+import com.radolyn.ayugram.ui.AyuMessageHistory;
 import com.radolyn.ayugram.ui.DummyView;
 
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -33049,6 +33052,9 @@ public class ChatActivity extends BaseFragment implements
         }
         boolean preserveDim = false;
         switch (option) {
+            case AyuConstants.OPTION_HISTORY:
+                presentFragment(new AyuMessageHistory(selectedObject));
+                break;
             case OPTION_RETRY: {
                 final MessageObject object = selectedObject;
                 final MessageObject.GroupedMessages group = selectedObjectGroup;
@@ -45709,6 +45715,11 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Edit));
                     options.add(OPTION_EDIT);
                     icons.add(R.drawable.msg_edit);
+                }
+                if (message != null && AyuMessagesController.getInstance().hasAnyRevisions(getUserConfig().getClientUserId(), dialog_id, message.getId())) {
+                    items.add(LocaleController.getString(R.string.EditsHistoryMenuText));
+                    options.add(AyuConstants.OPTION_HISTORY);
+                    icons.add(R.drawable.msg_log);
                 }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
                     items.add(LocaleController.getString(R.string.EditOfferAdd));

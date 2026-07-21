@@ -7750,6 +7750,54 @@ public class MessagesStorage extends BaseController {
         return ref.get();
     }
 
+    // Direct (non-queued) message lookups for use ONLY from code that is already
+    // running on the storage queue thread (e.g. inside getStorageQueue().postRunnable(...)) -
+    // calling the queued getMessage()/postRunnable from within such a context would deadlock
+    // the single-threaded storage queue.
+    public TLRPC.Message getMessageInternal(long dialogId, long msgId) {
+        SQLiteCursor cursor = null;
+        try {
+            cursor = database.queryFinalized("SELECT data FROM messages_v2 WHERE uid = " + dialogId + " AND mid = " + msgId + " LIMIT 1");
+            while (cursor.next()) {
+                NativeByteBuffer data = cursor.byteBufferValue(0);
+                if (data != null) {
+                    TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                    data.reuse();
+                    return message;
+                }
+            }
+        } catch (Exception e) {
+            checkSQLException(e);
+        } finally {
+            if (cursor != null) {
+                cursor.dispose();
+            }
+        }
+        return null;
+    }
+
+    public TLRPC.Message getMessageIgnoringDialogInternal(long msgId) {
+        SQLiteCursor cursor = null;
+        try {
+            cursor = database.queryFinalized("SELECT data FROM messages_v2 WHERE mid = " + msgId + " AND is_channel = 0 LIMIT 1");
+            while (cursor.next()) {
+                NativeByteBuffer data = cursor.byteBufferValue(0);
+                if (data != null) {
+                    TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                    data.reuse();
+                    return message;
+                }
+            }
+        } catch (Exception e) {
+            checkSQLException(e);
+        } finally {
+            if (cursor != null) {
+                cursor.dispose();
+            }
+        }
+        return null;
+    }
+
     public boolean hasInviteMeMessage(long chatId) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         boolean[] result = new boolean[1];
