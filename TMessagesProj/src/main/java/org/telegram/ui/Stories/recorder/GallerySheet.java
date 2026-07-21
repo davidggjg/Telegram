@@ -32,6 +32,9 @@ public class GallerySheet extends BottomSheet {
         super(context, false, resourcesProvider);
 
         fixNavigationBar(0xff1f1f1f);
+        if (MediaController.allMediaAlbums.isEmpty()) {
+            MediaController.loadGalleryPhotosAlbums(0);
+        }
         listView = new GalleryListView(UserConfig.selectedAccount, context, new DarkThemeResourceProvider(), null, onlyPhotos, aspectRatio, false, false) {
             @Override
             public String getTitle() {
