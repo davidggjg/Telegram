@@ -378,8 +378,8 @@ public class ConnectionsManager extends BaseController {
                 (object instanceof TLRPC.TL_messages_setTyping || object instanceof TLRPC.TL_messages_setEncryptedTyping)) {
             return;
         }
-        if (!com.radolyn.ayugram.AyuConfig.sendOnlinePackets && object instanceof TLRPC.TL_account_updateStatus) {
-            ((TLRPC.TL_account_updateStatus) object).offline = true;
+        if (!com.radolyn.ayugram.AyuConfig.sendOnlinePackets && object instanceof org.telegram.tgnet.tl.TL_account.updateStatus) {
+            ((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline = true;
         }
         if (!com.radolyn.ayugram.AyuConfig.sendReadPackets &&
                 (object instanceof TLRPC.TL_messages_readHistory ||
