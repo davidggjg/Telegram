@@ -8,6 +8,8 @@
 
 package org.telegram.messenger;
 
+import com.radolyn.ayugram.AyuConfig;
+
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -1918,18 +1920,21 @@ public class ChatObject {
     }
 
     public static boolean isKickedFromChat(TLRPC.Chat chat) {
-        return chat == null || chat instanceof TLRPC.TL_chatEmpty || chat instanceof TLRPC.TL_chatForbidden || chat instanceof TLRPC.TL_channelForbidden || chat.kicked || chat.deactivated || chat.banned_rights != null && chat.banned_rights.view_messages;
+        boolean kicked = !AyuConfig.antiKick && chat != null && chat.kicked;
+        return chat == null || chat instanceof TLRPC.TL_chatEmpty || chat instanceof TLRPC.TL_chatForbidden || chat instanceof TLRPC.TL_channelForbidden || kicked || chat.deactivated || chat.banned_rights != null && chat.banned_rights.view_messages;
     }
 
     public static boolean isNotInChat(TLRPC.Chat chat) {
-        return chat == null || chat instanceof TLRPC.TL_chatEmpty || chat instanceof TLRPC.TL_chatForbidden || chat instanceof TLRPC.TL_channelForbidden || chat.left || chat.kicked || chat.deactivated;
+        boolean kicked = !AyuConfig.antiKick && chat != null && chat.kicked;
+        return chat == null || chat instanceof TLRPC.TL_chatEmpty || chat instanceof TLRPC.TL_chatForbidden || chat instanceof TLRPC.TL_channelForbidden || chat.left || kicked || chat.deactivated;
     }
 
     public static boolean isInChat(TLRPC.Chat chat) {
         if (chat == null || chat instanceof TLRPC.TL_chatEmpty || chat instanceof TLRPC.TL_chatForbidden || chat instanceof TLRPC.TL_channelForbidden) {
             return false;
         }
-        if (chat.left || chat.kicked || chat.deactivated) {
+        boolean kicked = !AyuConfig.antiKick && chat.kicked;
+        if (chat.left || kicked || chat.deactivated) {
             return false;
         }
         return true;
