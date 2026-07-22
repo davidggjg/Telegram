@@ -24,6 +24,7 @@
   <string name="DisableAds">Disable ads</string>
   <string name="LocalPremium">Local Telegram Premium</string>
   <string name="AntiKick">Anti-kick (stay in chat when removed)</string>
+  <string name="GhostModeToggle">Ghost mode (hide online/read status)</string>
 
   <string name="CustomizationHeader">Customization</string>
   <string name="DeletedMarkText">Deleted mark</string>

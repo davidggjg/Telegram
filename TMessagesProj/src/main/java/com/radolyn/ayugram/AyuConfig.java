@@ -46,6 +46,12 @@ public class AyuConfig {
     public static boolean WALMode;
     public static boolean antiKick;
 
+    public static boolean sendReadPackets;
+    public static boolean sendOnlinePackets;
+    public static boolean sendOfflinePacketAfterOnline;
+    public static boolean sendUploadProgress;
+    public static boolean markReadAfterSend;
+
     private static boolean configLoaded;
 
     static {
@@ -91,6 +97,13 @@ public class AyuConfig {
             // ~ Anti-kick
             antiKick = preferences.getBoolean("antiKick", false);
 
+            // ~ Ghost mode
+            sendReadPackets = preferences.getBoolean("sendReadPackets", true);
+            sendOnlinePackets = preferences.getBoolean("sendOnlinePackets", true);
+            sendUploadProgress = preferences.getBoolean("sendUploadProgress", true);
+            sendOfflinePacketAfterOnline = preferences.getBoolean("sendOfflinePacketAfterOnline", false);
+            markReadAfterSend = preferences.getBoolean("markReadAfterSend", true);
+
             configLoaded = true;
         }
     }
@@ -119,6 +132,26 @@ public class AyuConfig {
         }
 
         return !user.bot || AyuConfig.saveForBots;
+    }
+
+    public static boolean isGhostModeActive() {
+        return !sendReadPackets && !sendOnlinePackets && !sendUploadProgress && sendOfflinePacketAfterOnline;
+    }
+
+    public static void setGhostMode(boolean enabled) {
+        sendReadPackets = !enabled;
+        sendOnlinePackets = !enabled;
+        sendUploadProgress = !enabled;
+        sendOfflinePacketAfterOnline = enabled;
+
+        AyuConfig.editor.putBoolean("sendReadPackets", AyuConfig.sendReadPackets).apply();
+        AyuConfig.editor.putBoolean("sendOnlinePackets", AyuConfig.sendOnlinePackets).apply();
+        AyuConfig.editor.putBoolean("sendUploadProgress", AyuConfig.sendUploadProgress).apply();
+        AyuConfig.editor.putBoolean("sendOfflinePacketAfterOnline", AyuConfig.sendOfflinePacketAfterOnline).apply();
+    }
+
+    public static void toggleGhostMode() {
+        setGhostMode(!isGhostModeActive());
     }
 
     public static String getDeletedMark() {

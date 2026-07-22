@@ -26,9 +26,8 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.RecyclerListView;
 
 /**
- * VortexGram Preferences — Phase 1 subset.
- * Ghost-mode and AyuSync sections aren't ported yet; those land with their
- * respective network hooks in a later phase.
+ * VortexGram Preferences.
+ * AyuSync isn't ported yet - it requires a self-hosted sync server.
  */
 public class VortexGramPreferencesActivity extends BasePreferencesActivity {
 
@@ -46,6 +45,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int disableAdsRow;
     private int localPremiumRow;
     private int antiKickRow;
+    private int ghostModeRow;
     private int filtersRow;
     private int qolDividerRow;
 
@@ -75,6 +75,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         disableAdsRow = newRow();
         localPremiumRow = newRow();
         antiKickRow = newRow();
+        ghostModeRow = newRow();
         filtersRow = newRow();
         qolDividerRow = newRow();
 
@@ -124,6 +125,9 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == antiKickRow) {
             AyuConfig.editor.putBoolean("antiKick", AyuConfig.antiKick ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.antiKick);
+        } else if (position == ghostModeRow) {
+            AyuConfig.toggleGhostMode();
+            ((TextCheckCell) view).setChecked(AyuConfig.isGhostModeActive());
         } else if (position == filtersRow) {
             NotificationsCheckCell checkCell = (NotificationsCheckCell) view;
             if (LocaleController.isRTL && x <= AndroidUtilities.dp(76) || !LocaleController.isRTL && x >= view.getMeasuredWidth() - AndroidUtilities.dp(76)) {
@@ -228,6 +232,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.LocalPremium) + " β", AyuConfig.localPremium, true);
                     } else if (position == antiKickRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.AntiKick), AyuConfig.antiKick, true);
+                    } else if (position == ghostModeRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.GhostModeToggle), AyuConfig.isGhostModeActive(), true);
                     } else if (position == WALModeRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.WALMode), AyuConfig.WALMode, false);
                     }

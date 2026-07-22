@@ -372,6 +372,37 @@ public class ConnectionsManager extends BaseController {
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }
+
+        // --- VortexGram: ghost mode
+        if (!com.radolyn.ayugram.AyuConfig.sendUploadProgress &&
+                (object instanceof TLRPC.TL_messages_setTyping || object instanceof TLRPC.TL_messages_setEncryptedTyping)) {
+            return;
+        }
+        if (!com.radolyn.ayugram.AyuConfig.sendOnlinePackets && object instanceof TLRPC.TL_account_updateStatus) {
+            ((TLRPC.TL_account_updateStatus) object).offline = true;
+        }
+        if (!com.radolyn.ayugram.AyuConfig.sendReadPackets &&
+                (object instanceof TLRPC.TL_messages_readHistory ||
+                        object instanceof TLRPC.TL_messages_readEncryptedHistory ||
+                        object instanceof TLRPC.TL_messages_readDiscussion ||
+                        object instanceof TLRPC.TL_messages_readMessageContents ||
+                        object instanceof TLRPC.TL_channels_readHistory ||
+                        object instanceof TLRPC.TL_channels_readMessageContents) &&
+                !com.radolyn.ayugram.utils.AyuState.getAllowReadPacket()) {
+            TLRPC.TL_messages_affectedMessages fakeRes = new TLRPC.TL_messages_affectedMessages();
+            fakeRes.pts = -1;
+            fakeRes.pts_count = 0;
+            if (onComplete != null) {
+                try {
+                    onComplete.run(fakeRes, null);
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+            }
+            return;
+        }
+        // --- VortexGram: end ghost mode
+
         try {
             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
             object.serializeToStream(buffer);
