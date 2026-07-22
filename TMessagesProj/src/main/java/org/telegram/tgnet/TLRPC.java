@@ -40270,7 +40270,7 @@ public class TLRPC {
             deactivated = hasFlag(flags, FLAG_5);
             call_active = hasFlag(flags, FLAG_23);
             call_not_empty = hasFlag(flags, FLAG_24);
-            noforwards = hasFlag(flags, FLAG_25);
+            noforwards = false;
             id = stream.readInt64(exception);
             title = stream.readString(exception);
             photo = ChatPhoto.TLdeserialize(stream, stream.readInt32(exception), exception, allowStrippedThumb);
@@ -40547,7 +40547,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -40684,7 +40684,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -40827,7 +40827,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41008,7 +41008,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41191,7 +41191,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41362,7 +41362,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41525,7 +41525,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41688,7 +41688,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41845,7 +41845,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -41994,7 +41994,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -42125,7 +42125,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -42267,7 +42267,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -42405,7 +42405,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -42520,7 +42520,7 @@ public class TLRPC {
             call_not_empty = hasFlag(flags, FLAG_24);
             fake = hasFlag(flags, FLAG_25);
             gigagroup = hasFlag(flags, FLAG_26);
-            noforwards = hasFlag(flags, FLAG_27);
+            noforwards = false;
             join_to_send = hasFlag(flags, FLAG_28);
             join_request = hasFlag(flags, FLAG_29);
             forum = hasFlag(flags, FLAG_30);
@@ -45810,8 +45810,8 @@ public class TLRPC {
             can_view_revenue = hasFlag(flags2, FLAG_9);
             bot_can_manage_emoji_status = hasFlag(flags2, FLAG_10);
             display_gifts_button = hasFlag(flags2, FLAG_16);
-            noforwards_my_enabled = hasFlag(flags2, FLAG_23);
-            noforwards_peer_enabled = hasFlag(flags2, FLAG_24);
+            noforwards_my_enabled = false;
+            noforwards_peer_enabled = false;
             unofficial_security_risk = hasFlag(flags2, FLAG_26);
             id = stream.readInt64(exception);
             if (hasFlag(flags, FLAG_1)) {
@@ -46073,8 +46073,8 @@ public class TLRPC {
             can_view_revenue = hasFlag(flags2, FLAG_9);
             bot_can_manage_emoji_status = hasFlag(flags2, FLAG_10);
             display_gifts_button = hasFlag(flags2, FLAG_16);
-            noforwards_my_enabled = hasFlag(flags2, FLAG_23);
-            noforwards_peer_enabled = hasFlag(flags2, FLAG_24);
+            noforwards_my_enabled = false;
+            noforwards_peer_enabled = false;
             id = stream.readInt64(exception);
             if (hasFlag(flags, FLAG_1)) {
                 about = stream.readString(exception);
@@ -59731,7 +59731,7 @@ public class TLRPC {
             legacy = hasFlag(flags, FLAG_19);
             edit_hide = hasFlag(flags, FLAG_21);
             pinned = hasFlag(flags, FLAG_24);
-            noforwards = hasFlag(flags, FLAG_26);
+            noforwards = false;
             invert_media = hasFlag(flags, FLAG_27);
             flags2 = stream.readInt32(exception);
             offline = hasFlag(flags2, FLAG_1);
