@@ -348,13 +348,9 @@ public class ApplicationLoader extends Application {
     }
 
     public static void startPushService() {
-        SharedPreferences preferences = MessagesController.getGlobalNotificationsSettings();
-        boolean enabled;
-        if (preferences.contains("pushService")) {
-            enabled = preferences.getBoolean("pushService", true);
-        } else {
-            enabled = MessagesController.getMainSettings(UserConfig.selectedAccount).getBoolean("keepAliveService", false);
-        }
+        // VortexGram: always keep the background connection service alive, for faster
+        // message delivery regardless of the notification setting or its default.
+        boolean enabled = true;
         if (enabled) {
             try {
                 applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
