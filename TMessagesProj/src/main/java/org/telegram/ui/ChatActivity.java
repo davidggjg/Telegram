@@ -138,6 +138,8 @@ import com.radolyn.ayugram.AyuFilter;
 import com.radolyn.ayugram.messages.AyuMessagesController;
 import com.radolyn.ayugram.ui.AyuMessageHistory;
 import com.radolyn.ayugram.ui.DummyView;
+import com.radolyn.ayugram.utils.AyuGhostUtils;
+import com.radolyn.ayugram.utils.AyuState;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -33055,6 +33057,13 @@ public class ChatActivity extends BaseFragment implements
             case AyuConstants.OPTION_HISTORY:
                 presentFragment(new AyuMessageHistory(selectedObject));
                 break;
+            case AyuConstants.OPTION_TTL:
+                AyuState.setAllowReadPacket(true, 1);
+                sendSecretMessageRead(selectedObject, true);
+                break;
+            case AyuConstants.OPTION_READ_UNTIL:
+                AyuGhostUtils.markReadOnServer(currentAccount, selectedObject.messageOwner.id, getMessagesController().getInputPeer(selectedObject.messageOwner.peer_id));
+                break;
             case OPTION_RETRY: {
                 final MessageObject object = selectedObject;
                 final MessageObject.GroupedMessages group = selectedObjectGroup;
@@ -45720,6 +45729,18 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.EditsHistoryMenuText));
                     options.add(AyuConstants.OPTION_HISTORY);
                     icons.add(R.drawable.msg_log);
+                }
+                if (message != null && message.messageOwner != null && message.messageOwner.ttl > 0) {
+                    items.add("TTL: " + LocaleController.formatTTLString(message.messageOwner.ttl));
+                    options.add(AyuConstants.OPTION_TTL);
+                    icons.add(R.drawable.msg_autodelete);
+                }
+                if (!AyuConfig.sendReadPackets && message != null && message.messageOwner != null
+                        && message.messageOwner.from_id != null
+                        && message.messageOwner.from_id.user_id != getUserConfig().getClientUserId()) {
+                    items.add(LocaleController.getString(R.string.ReadUntilMenuText));
+                    options.add(AyuConstants.OPTION_READ_UNTIL);
+                    icons.add(R.drawable.msg_view_file);
                 }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
                     items.add(LocaleController.getString(R.string.EditOfferAdd));

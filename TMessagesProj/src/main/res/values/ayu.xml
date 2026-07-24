@@ -43,6 +43,7 @@
 
   <string name="EditsHistoryTitle">Edits history</string>
   <string name="EditsHistoryMenuText">History</string>
+  <string name="ReadUntilMenuText">Mark read until here</string>
 
   <string name="WALMode">Enable WAL mode</string>
   <string name="ClearAyuDatabase">Clear VortexGram Database</string>

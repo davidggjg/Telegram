@@ -21,6 +21,8 @@ public class AyuConstants {
     public static final int MESSAGES_DELETED_NOTIFICATION = 6969;
 
     public static final int OPTION_HISTORY = 1338_01;
+    public static final int OPTION_TTL = 1338_02;
+    public static final int OPTION_READ_UNTIL = 1338_03;
 
     public static String DEFAULT_DELETED_MARK = "🧹";
     public static String DEFAULT_AYUSYNC_SERVER = BuildVars.isBetaApp() ? "ayusync-dev.radolyn.com:5000" : "ayusync.cloud";
