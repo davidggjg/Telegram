@@ -198,4 +198,8 @@ android {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+// VortexGram: google-services.json only registers org.telegram.messenger's package
+// names, not our own applicationId - applying this plugin would fail the build
+// looking for a matching client. Firebase init is already try/caught in
+// PushListenerController, so the app just runs without FCM push instead of
+// crashing; the always-on background connection service covers message delivery.
