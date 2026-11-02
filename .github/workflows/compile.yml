@@ -19,6 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 13.1.1 moved two Java modules into submodules, and settings.gradle
+      # fails without them. Only these two are needed to compile Java; the jni
+      # submodules matter solely for the native build.
+      - name: Fetch the Java submodules
+        run: |
+          git submodule update --init --depth 1 \
+            TMessagesProj_Modules/media \
+            TMessagesProj/lib/jlatexmath
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

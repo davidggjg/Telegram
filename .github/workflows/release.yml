@@ -11,7 +11,11 @@ jobs:
       CCACHE_MAXSIZE: "10G"
       CCACHE_HARDLINK: "true"
     steps:
+      # The native build needs every submodule, and since 13.1.1 two Java
+      # modules live in submodules too - settings.gradle fails without them.
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Update packages
         run: sudo apt-get update
