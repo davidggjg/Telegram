@@ -84,4 +84,9 @@
 
   <!-- הודעה שמבקשת להפעיל מחדש לאחר שינוי הגדרות -->
   <string name="RestartRequired">יש להפעיל מחדש את האפליקציה כדי להחיל את השינוי.</string>
+
+  <string name="BackgroundTransfers">המשך הורדות והעלאות ברקע</string>
+  <string name="TransferDownloading">מוריד %1$d קבצים</string>
+  <string name="TransferUploading">מעלה %1$d קבצים</string>
+  <string name="TransferBoth">מוריד %1$d, מעלה %2$d קבצים</string>
 </resources>

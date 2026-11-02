@@ -21677,6 +21677,10 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public SponsoredMessagesInfo getSponsoredMessages(long dialogId) {
+        // VortexGram: not fetched, not cached, not marked as read.
+        if (com.radolyn.ayugram.AyuConfig.disableAds) {
+            return null;
+        }
         SponsoredMessagesInfo info = sponsoredMessages.get(dialogId);
         if (info != null && (info.loading || Math.abs(SystemClock.elapsedRealtime() - info.loadTime) <= 5 * 60 * 1000)) {
             return info;
@@ -24406,6 +24410,20 @@ public class MessagesController extends BaseController implements NotificationCe
             req.enabled = false;
             getConnectionsManager().sendRequest(req, null);
         }
+    }
+
+    /**
+     * VortexGram: whether ads should be suppressed.
+     *
+     * Telegram only lets Premium subscribers turn sponsored content off, so
+     * every ad surface gates on isPremium() && isSponsoredDisabled(). The
+     * VortexGram setting removes them outright, with no subscription.
+     */
+    public boolean adsDisabled() {
+        if (com.radolyn.ayugram.AyuConfig.disableAds) {
+            return true;
+        }
+        return getUserConfig().isPremium() && isSponsoredDisabled();
     }
 
     public boolean isSponsoredDisabled() {

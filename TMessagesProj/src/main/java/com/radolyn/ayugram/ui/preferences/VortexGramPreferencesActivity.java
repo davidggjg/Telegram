@@ -43,6 +43,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int qolHeaderRow;
     private int keepAliveServiceRow;
     private int disableAdsRow;
+    private int backgroundTransfersRow;
     private int localPremiumRow;
     private int antiKickRow;
     private int ghostModeRow;
@@ -73,6 +74,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         qolHeaderRow = newRow();
         keepAliveServiceRow = newRow();
         disableAdsRow = newRow();
+        backgroundTransfersRow = newRow();
         localPremiumRow = newRow();
         antiKickRow = newRow();
         ghostModeRow = newRow();
@@ -120,6 +122,9 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == disableAdsRow) {
             AyuConfig.editor.putBoolean("disableAds", AyuConfig.disableAds ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.disableAds);
+        } else if (position == backgroundTransfersRow) {
+            AyuConfig.editor.putBoolean("backgroundTransfers", AyuConfig.backgroundTransfers ^= true).apply();
+            ((TextCheckCell) view).setChecked(AyuConfig.backgroundTransfers);
         } else if (position == localPremiumRow) {
             toggleLocalPremium();
         } else if (position == antiKickRow) {
@@ -228,6 +233,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.KeepAliveService), AyuConfig.keepAliveService, true);
                     } else if (position == disableAdsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.DisableAds), AyuConfig.disableAds, true);
+                    } else if (position == backgroundTransfersRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.BackgroundTransfers), AyuConfig.backgroundTransfers, true);
                     } else if (position == localPremiumRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.LocalPremium) + " β", AyuConfig.localPremium, true);
                     } else if (position == antiKickRow) {

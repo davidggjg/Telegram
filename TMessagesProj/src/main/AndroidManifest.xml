@@ -496,6 +496,12 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
         />
+        <!-- VortexGram: keeps downloads and uploads alive in the background -->
+        <service
+            android:name="com.radolyn.ayugram.services.VortexTransferService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".VideoEncodingService"
             android:enabled="true"

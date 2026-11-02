@@ -39,6 +39,7 @@ public class AyuConfig {
 
     public static boolean keepAliveService;
     public static boolean disableAds;
+    public static boolean backgroundTransfers;
     public static boolean localPremium;
     public static boolean regexFiltersEnabled;
     public static boolean regexFiltersInChats;
@@ -86,6 +87,7 @@ public class AyuConfig {
             // ~ Useful features
             keepAliveService = preferences.getBoolean("keepAliveService", true);
             disableAds = preferences.getBoolean("disableAds", true);
+            backgroundTransfers = preferences.getBoolean("backgroundTransfers", true);
             localPremium = preferences.getBoolean("localPremium", true);
             regexFiltersEnabled = preferences.getBoolean("regexFiltersEnabled", false);
             regexFiltersInChats = preferences.getBoolean("regexFiltersInChats", false);

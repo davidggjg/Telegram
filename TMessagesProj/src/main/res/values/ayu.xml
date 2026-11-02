@@ -50,4 +50,9 @@
   <string name="ClearAyuDatabaseNotification">VortexGram database cleared</string>
 
   <string name="RestartRequired">Restart the App to take effect.</string>
+
+  <string name="BackgroundTransfers">Keep transfers running in background</string>
+  <string name="TransferDownloading">Downloading %1$d file(s)</string>
+  <string name="TransferUploading">Uploading %1$d file(s)</string>
+  <string name="TransferBoth">Downloading %1$d, uploading %2$d file(s)</string>
 </resources>
