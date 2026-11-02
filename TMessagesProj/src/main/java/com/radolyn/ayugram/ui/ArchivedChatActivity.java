@@ -148,7 +148,7 @@ public class ArchivedChatActivity extends BaseFragment {
         }
         AndroidUtilities.openForView(file, file.getName(),
                 TextUtils.isEmpty(message.mimeType) ? "*/*" : message.mimeType,
-                getParentActivity(), null);
+                getParentActivity(), null, false);
     }
 
     /** Hands the whole kept history to another app as a plain text file. */
@@ -191,7 +191,7 @@ public class ArchivedChatActivity extends BaseFragment {
     }
 
     private String formatDate(int secondsSinceEpoch) {
-        return LocaleController.getInstance().formatterYear.format(new Date(secondsSinceEpoch * 1000L));
+        return LocaleController.getInstance().getFormatterYear().format(new Date(secondsSinceEpoch * 1000L));
     }
 
     private String mediaLabel(ArchivedMessage message) {

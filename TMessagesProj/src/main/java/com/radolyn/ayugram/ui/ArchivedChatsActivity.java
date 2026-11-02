@@ -165,7 +165,7 @@ public class ArchivedChatsActivity extends BaseFragment implements NotificationC
         }
         String count = LocaleController.formatString(
                 "VortexArchivedChatMessagesCount", R.string.VortexArchivedChatMessagesCount, dialog.messagesCount);
-        String date = LocaleController.getInstance().formatterYear.format(new java.util.Date(dialog.archivedDate * 1000L));
+        String date = LocaleController.getInstance().getFormatterYear().format(new java.util.Date(dialog.archivedDate * 1000L));
         return reason + " · " + date + " · " + count;
     }
 
