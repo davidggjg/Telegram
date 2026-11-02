@@ -3977,6 +3977,10 @@ public class MessageObject {
     }
 
     public boolean hasReactions() {
+        // VortexGram: optionally hide the reaction counters under channel posts.
+        if (com.radolyn.ayugram.AyuConfig.hideChannelReactions && messageOwner.post) {
+            return false;
+        }
         return messageOwner.reactions != null && !messageOwner.reactions.results.isEmpty();
     }
 

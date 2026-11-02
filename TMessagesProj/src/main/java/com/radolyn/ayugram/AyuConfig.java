@@ -41,6 +41,8 @@ public class AyuConfig {
     public static boolean disableAds;
     public static boolean backgroundTransfers;
     public static boolean archiveLeftChats;
+    public static boolean disableSimilarChannels;
+    public static boolean hideChannelReactions;
     public static boolean localPremium;
     public static boolean regexFiltersEnabled;
     public static boolean regexFiltersInChats;
@@ -90,6 +92,8 @@ public class AyuConfig {
             disableAds = preferences.getBoolean("disableAds", true);
             backgroundTransfers = preferences.getBoolean("backgroundTransfers", true);
             archiveLeftChats = preferences.getBoolean("archiveLeftChats", true);
+            disableSimilarChannels = preferences.getBoolean("disableSimilarChannels", false);
+            hideChannelReactions = preferences.getBoolean("hideChannelReactions", false);
             localPremium = preferences.getBoolean("localPremium", true);
             regexFiltersEnabled = preferences.getBoolean("regexFiltersEnabled", false);
             regexFiltersInChats = preferences.getBoolean("regexFiltersInChats", false);

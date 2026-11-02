@@ -117,4 +117,8 @@
   <string name="VortexDownloadAllRunning">כבר רצה הורדה מרוכזת</string>
   <string name="VortexDownloadAllFailed">לא ניתן לקבל את רשימת המדיה בצ\'אט הזה</string>
   <string name="VortexDownloadNow">הורד</string>
+
+  <!-- Extra toggles ported from the AyuGram / exteraGram builds -->
+  <string name="DisableSimilarChannels">בטל ערוצים דומים</string>
+  <string name="HideChannelReactions">הסתר ריאקציות בערוצים</string>
 </resources>

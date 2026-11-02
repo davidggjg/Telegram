@@ -46,6 +46,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int backgroundTransfersRow;
     private int archiveLeftChatsRow;
     private int archivedChatsBtnRow;
+    private int disableSimilarChannelsRow;
+    private int hideChannelReactionsRow;
     private int localPremiumRow;
     private int antiKickRow;
     private int ghostModeRow;
@@ -79,6 +81,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         backgroundTransfersRow = newRow();
         archiveLeftChatsRow = newRow();
         archivedChatsBtnRow = newRow();
+        disableSimilarChannelsRow = newRow();
+        hideChannelReactionsRow = newRow();
         localPremiumRow = newRow();
         antiKickRow = newRow();
         ghostModeRow = newRow();
@@ -134,6 +138,12 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(AyuConfig.archiveLeftChats);
         } else if (position == archivedChatsBtnRow) {
             presentFragment(new com.radolyn.ayugram.ui.ArchivedChatsActivity());
+        } else if (position == disableSimilarChannelsRow) {
+            AyuConfig.editor.putBoolean("disableSimilarChannels", AyuConfig.disableSimilarChannels ^= true).apply();
+            ((TextCheckCell) view).setChecked(AyuConfig.disableSimilarChannels);
+        } else if (position == hideChannelReactionsRow) {
+            AyuConfig.editor.putBoolean("hideChannelReactions", AyuConfig.hideChannelReactions ^= true).apply();
+            ((TextCheckCell) view).setChecked(AyuConfig.hideChannelReactions);
         } else if (position == localPremiumRow) {
             toggleLocalPremium();
         } else if (position == antiKickRow) {
@@ -250,6 +260,10 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.BackgroundTransfers), AyuConfig.backgroundTransfers, true);
                     } else if (position == archiveLeftChatsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.VortexArchiveLeftChats), AyuConfig.archiveLeftChats, true);
+                    } else if (position == disableSimilarChannelsRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.DisableSimilarChannels), AyuConfig.disableSimilarChannels, true);
+                    } else if (position == hideChannelReactionsRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.HideChannelReactions), AyuConfig.hideChannelReactions, true);
                     } else if (position == localPremiumRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.LocalPremium) + " β", AyuConfig.localPremium, true);
                     } else if (position == antiKickRow) {

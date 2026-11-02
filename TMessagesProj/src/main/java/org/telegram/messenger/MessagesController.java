@@ -23843,6 +23843,10 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public ChannelRecommendations getChannelRecommendations(long dialogId) {
+        // VortexGram: never ask for or show "similar channels".
+        if (com.radolyn.ayugram.AyuConfig.disableSimilarChannels) {
+            return null;
+        }
         if (cachedChannelRecommendations == null) {
             cachedChannelRecommendations = new HashMap<>();
         }

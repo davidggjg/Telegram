@@ -83,4 +83,8 @@
   <string name="VortexDownloadAllRunning">A bulk download is already running</string>
   <string name="VortexDownloadAllFailed">Could not list the media in this chat</string>
   <string name="VortexDownloadNow">Download</string>
+
+  <!-- Extra toggles ported from the AyuGram / exteraGram builds -->
+  <string name="DisableSimilarChannels">Disable Similar Channels</string>
+  <string name="HideChannelReactions">Hide Reactions in Channels</string>
 </resources>
