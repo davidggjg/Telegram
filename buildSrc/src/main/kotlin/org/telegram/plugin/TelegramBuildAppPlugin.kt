@@ -24,21 +24,29 @@ class TelegramBuildAppPlugin : Plugin<Project> {
             val task = project.tasks.register<TelegramStringsTask>(
                 "generate${suffix}TelegramStrings"
             ) {
+                // ayu.xml holds VortexGram's own strings. Telegram resolves
+                // strings at runtime from a generated asset rather than from
+                // Android resources, so a string missing from these inputs
+                // renders as "LOC_ERR:null" however correct its resource is.
                 stringsXml.from(
                     telegramModule.fileTree("src/main/res/values") {
                         include("strings.xml")
+                        include("ayu.xml")
                     },
                     project.fileTree("src/main/res/values") {
                         include("strings.xml")
+                        include("ayu.xml")
                     }
                 )
 
                 localizationFiles.from(
                     telegramModule.fileTree("src/main/res") {
                         include("values-*/strings.xml")
+                        include("values-*/ayu.xml")
                     },
                     project.fileTree("src/main/res") {
                         include("values-*/strings.xml")
+                        include("values-*/ayu.xml")
                     }
                 )
 
