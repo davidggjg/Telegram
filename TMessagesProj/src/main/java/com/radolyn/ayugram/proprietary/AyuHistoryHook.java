@@ -47,14 +47,14 @@ public class AyuHistoryHook {
         }
         try {
             long userId = UserConfig.getInstance(currentAccount).getClientUserId();
-            var deleted = AyuMessagesController.getInstance().getMessages(userId, dialogId, topicId, startId, endId, limit);
+            java.util.List<com.radolyn.ayugram.database.entities.DeletedMessageFull> deleted = AyuMessagesController.getInstance().getMessages(userId, dialogId, topicId, startId, endId, limit);
             if (deleted == null || deleted.isEmpty()) {
                 return;
             }
-            for (var full : deleted) {
-                var dm = full.message;
+            for (com.radolyn.ayugram.database.entities.DeletedMessageFull full : deleted) {
+                com.radolyn.ayugram.database.entities.DeletedMessage dm = full.message;
                 boolean found = false;
-                for (var m : messArr) {
+                for (MessageObject m : messArr) {
                     if (m.messageOwner.id == dm.messageId) {
                         found = true;
                         break;
@@ -63,10 +63,10 @@ public class AyuHistoryHook {
                 if (found) {
                     continue;
                 }
-                var tlMsg = new TLRPC.TL_message();
+                TLRPC.TL_message tlMsg = new TLRPC.TL_message();
                 mapFromBase(dm, tlMsg, currentAccount);
                 mapMediaFromBase(dm, tlMsg);
-                var messageObject = new MessageObject(currentAccount, tlMsg, false, true);
+                MessageObject messageObject = new MessageObject(currentAccount, tlMsg, false, true);
                 messArr.add(messageObject);
                 if (messagesDict != null) {
                     int index = messageObject.getDialogId() == dialogId ? 0 : 1;
