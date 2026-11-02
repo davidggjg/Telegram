@@ -19,6 +19,7 @@ public class AyuConstants {
 
     public static final int MESSAGE_EDITED_NOTIFICATION = 6968;
     public static final int MESSAGES_DELETED_NOTIFICATION = 6969;
+    public static final int ARCHIVED_DIALOGS_CHANGED = 6974;
 
     public static final int OPTION_HISTORY = 1338_01;
     public static final int OPTION_TTL = 1338_02;

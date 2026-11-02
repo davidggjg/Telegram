@@ -53,6 +53,18 @@ public class AyuMessageUtils {
         AyuHistoryHook.mapMediaFromBase(editedMessage, msg);
     }
 
+    /**
+     * The same mapping the deleted and edited paths use, for any
+     * AyuMessageBase subclass. Used by the archived-chats feature.
+     */
+    public static void mapAny(AyuSavePreferences prefs, AyuMessageBase base) {
+        mapToBase(prefs, base);
+    }
+
+    public static void mapMediaAny(AyuSavePreferences prefs, AyuMessageBase base, boolean copyMedia) {
+        mapMediaToBase(prefs, base, copyMedia);
+    }
+
     private static void mapToBase(AyuSavePreferences prefs, AyuMessageBase base) {
         base.userId = prefs.getUserId();
         base.dialogId = prefs.getDialogId();

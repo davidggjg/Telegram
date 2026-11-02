@@ -89,4 +89,32 @@
   <string name="TransferDownloading">מוריד %1$d קבצים</string>
   <string name="TransferUploading">מעלה %1$d קבצים</string>
   <string name="TransferBoth">מוריד %1$d, מעלה %2$d קבצים</string>
+
+  <!-- Archived chats and bulk media download -->
+  <string name="VortexArchivedChats">צ\'אטים בארכיון</string>
+  <string name="VortexArchivedChatsInfo">קבוצות וערוצים שיצאת מהם או שהוסרת מהם. ההיסטוריה נשמרת כאן גם אחרי שטלגרם מוחק אותה.</string>
+  <string name="VortexArchivedChatsEmpty">אין עדיין כלום בארכיון</string>
+  <string name="VortexArchivedChatsEmptyInfo">כשתצא מקבוצה או מערוץ, או שיסירו אותך, ההיסטוריה תישמר כאן אוטומטית.</string>
+  <string name="VortexArchivedChatsHeader">היסטוריה שנשמרה</string>
+  <string name="VortexArchiveLeftChats">שמור היסטוריה של צ\'אטים שיצאתי מהם</string>
+  <string name="VortexArchiveLeftChatsInfo">שומר את ההיסטוריה של קבוצה או ערוץ לפני שטלגרם מוחק אותה, כדי שתוכל לקרוא אותה גם אחרי יציאה או הסרה.</string>
+  <string name="VortexArchiveThisChat">שמור היסטוריה בארכיון</string>
+  <string name="VortexArchiveThisChatDone">ההיסטוריה נשמרת לארכיון</string>
+  <string name="VortexArchivedChatReasonLeft">יצאת</string>
+  <string name="VortexArchivedChatReasonRemoved">הוסרת</string>
+  <string name="VortexArchivedChatReasonDeleted">הצ\'אט נמחק</string>
+  <string name="VortexArchivedChatReasonSaved">נשמר על ידך</string>
+  <string name="VortexArchivedChatMessagesCount">%1$d הודעות</string>
+  <string name="VortexArchivedChatMediaMissing">המדיה מעולם לא הורדה, ולכן לא נשמרה</string>
+  <string name="VortexArchivedChatOpenMedia">פתח</string>
+  <string name="VortexArchivedChatDelete">הסר מהארכיון</string>
+  <string name="VortexArchivedChatDeleteConfirm">למחוק את ההיסטוריה השמורה של %1$s? אי אפשר לבטל את זה.</string>
+  <string name="VortexArchivedChatEmptyMessages">לא נשמרו הודעות עבור הצ\'אט הזה</string>
+  <string name="VortexDownloadAllMedia">הורד את כל התמונות והסרטונים</string>
+  <string name="VortexDownloadAllScanning">אוסף את כל המדיה…</string>
+  <string name="VortexDownloadAllNothing">לא נמצאו כאן תמונות או סרטונים</string>
+  <string name="VortexDownloadAllStarted">מוריד %1$d קבצים</string>
+  <string name="VortexDownloadAllRunning">כבר רצה הורדה מרוכזת</string>
+  <string name="VortexDownloadAllFailed">לא ניתן לקבל את רשימת המדיה בצ\'אט הזה</string>
+  <string name="VortexDownloadNow">הורד</string>
 </resources>

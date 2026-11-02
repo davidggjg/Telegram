@@ -44,6 +44,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int keepAliveServiceRow;
     private int disableAdsRow;
     private int backgroundTransfersRow;
+    private int archiveLeftChatsRow;
+    private int archivedChatsBtnRow;
     private int localPremiumRow;
     private int antiKickRow;
     private int ghostModeRow;
@@ -75,6 +77,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         keepAliveServiceRow = newRow();
         disableAdsRow = newRow();
         backgroundTransfersRow = newRow();
+        archiveLeftChatsRow = newRow();
+        archivedChatsBtnRow = newRow();
         localPremiumRow = newRow();
         antiKickRow = newRow();
         ghostModeRow = newRow();
@@ -125,6 +129,11 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == backgroundTransfersRow) {
             AyuConfig.editor.putBoolean("backgroundTransfers", AyuConfig.backgroundTransfers ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.backgroundTransfers);
+        } else if (position == archiveLeftChatsRow) {
+            AyuConfig.editor.putBoolean("archiveLeftChats", AyuConfig.archiveLeftChats ^= true).apply();
+            ((TextCheckCell) view).setChecked(AyuConfig.archiveLeftChats);
+        } else if (position == archivedChatsBtnRow) {
+            presentFragment(new com.radolyn.ayugram.ui.ArchivedChatsActivity());
         } else if (position == localPremiumRow) {
             toggleLocalPremium();
         } else if (position == antiKickRow) {
@@ -196,7 +205,11 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                 case 2:
                     TextCell textCell = (TextCell) holder.itemView;
                     textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-                    if (position == messageSavingBtnRow) {
+                    if (position == archivedChatsBtnRow) {
+                        textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.VortexArchivedChats),
+                                String.valueOf(com.radolyn.ayugram.messages.AyuArchiveController.getInstance().getDialogsCount(currentAccount)),
+                                R.drawable.msg_archive, true);
+                    } else if (position == messageSavingBtnRow) {
                         textCell.setText(LocaleController.getString(R.string.MessageSavingBtn), false);
                     } else if (position == deletedMarkTextRow) {
                         textCell.setTextAndValue(LocaleController.getString(R.string.DeletedMarkText), AyuConfig.getDeletedMark(), true);
@@ -235,6 +248,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.DisableAds), AyuConfig.disableAds, true);
                     } else if (position == backgroundTransfersRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.BackgroundTransfers), AyuConfig.backgroundTransfers, true);
+                    } else if (position == archiveLeftChatsRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.VortexArchiveLeftChats), AyuConfig.archiveLeftChats, true);
                     } else if (position == localPremiumRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.LocalPremium) + " β", AyuConfig.localPremium, true);
                     } else if (position == antiKickRow) {
@@ -277,7 +292,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
             ) {
                 return 1;
             } else if (
-                    position == messageSavingBtnRow ||
+                    position == archivedChatsBtnRow ||
+                            position == messageSavingBtnRow ||
                             position == deletedMarkTextRow ||
                             position == editedMarkTextRow ||
                             position == clearAyuDatabaseBtnRow

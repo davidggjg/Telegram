@@ -55,4 +55,32 @@
   <string name="TransferDownloading">Downloading %1$d file(s)</string>
   <string name="TransferUploading">Uploading %1$d file(s)</string>
   <string name="TransferBoth">Downloading %1$d, uploading %2$d file(s)</string>
+
+  <!-- Archived chats and bulk media download -->
+  <string name="VortexArchivedChats">Archived chats</string>
+  <string name="VortexArchivedChatsInfo">Groups and channels you left, or were removed from. Their history stays here after Telegram drops it.</string>
+  <string name="VortexArchivedChatsEmpty">Nothing archived yet</string>
+  <string name="VortexArchivedChatsEmptyInfo">When you leave a group or channel, or one removes you, its history is kept here automatically.</string>
+  <string name="VortexArchivedChatsHeader">Kept history</string>
+  <string name="VortexArchiveLeftChats">Keep history of chats I leave</string>
+  <string name="VortexArchiveLeftChatsInfo">Saves a group or channel\'s history before Telegram deletes it, so you can still read it after leaving or being removed.</string>
+  <string name="VortexArchiveThisChat">Keep history in archive</string>
+  <string name="VortexArchiveThisChatDone">History is being archived</string>
+  <string name="VortexArchivedChatReasonLeft">You left</string>
+  <string name="VortexArchivedChatReasonRemoved">You were removed</string>
+  <string name="VortexArchivedChatReasonDeleted">Chat deleted</string>
+  <string name="VortexArchivedChatReasonSaved">Kept by you</string>
+  <string name="VortexArchivedChatMessagesCount">%1$d messages</string>
+  <string name="VortexArchivedChatMediaMissing">Media was never downloaded, so it could not be kept</string>
+  <string name="VortexArchivedChatOpenMedia">Open</string>
+  <string name="VortexArchivedChatDelete">Remove from archive</string>
+  <string name="VortexArchivedChatDeleteConfirm">Delete the kept history of %1$s? This cannot be undone.</string>
+  <string name="VortexArchivedChatEmptyMessages">No messages were kept for this chat</string>
+  <string name="VortexDownloadAllMedia">Download all photos and videos</string>
+  <string name="VortexDownloadAllScanning">Grabbing all media…</string>
+  <string name="VortexDownloadAllNothing">No photos or videos found here</string>
+  <string name="VortexDownloadAllStarted">Downloading %1$d files</string>
+  <string name="VortexDownloadAllRunning">A bulk download is already running</string>
+  <string name="VortexDownloadAllFailed">Could not list the media in this chat</string>
+  <string name="VortexDownloadNow">Download</string>
 </resources>
