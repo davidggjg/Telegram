@@ -106,6 +106,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -135,6 +136,14 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.zxing.common.detector.MathUtils;
+import com.radolyn.ayugram.AyuConfig;
+import com.radolyn.ayugram.AyuConstants;
+import com.radolyn.ayugram.AyuFilter;
+import com.radolyn.ayugram.messages.AyuMessagesController;
+import com.radolyn.ayugram.ui.AyuMessageHistory;
+import com.radolyn.ayugram.ui.DummyView;
+import com.radolyn.ayugram.utils.AyuGhostUtils;
+import com.radolyn.ayugram.utils.AyuState;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -1705,6 +1714,8 @@ public class ChatActivity extends BaseFragment implements
 
     private final static int chat_menu_topic_create = 73;
 
+    private final static int export_messages = 75;
+
     private final static int id_chat_compose_panel = 1000;
 
     RecyclerListView.OnItemLongClickListenerExtended onItemLongClickListener = new RecyclerListView.OnItemLongClickListenerExtended() {
@@ -1729,7 +1740,41 @@ public class ChatActivity extends BaseFragment implements
                 if (view instanceof ChatMessageCell) {
                     outside = !((ChatMessageCell) view).isInsideBackground(x, y);
                 }
-                processRowSelect(view, outside, x, y);
+                int totalSelected = selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
+                if (totalSelected > 0 && view instanceof ChatMessageCell) {
+                    MessageObject pressedMsg = ((ChatMessageCell) view).getMessageObject();
+                    if (pressedMsg != null && pressedMsg.getId() > 0) {
+                        java.util.ArrayList<Integer> ids = new java.util.ArrayList<>();
+                        for (int a = 1; a >= 0; a--) {
+                            for (int b = 0; b < selectedMessagesIds[a].size(); b++) {
+                                int k = selectedMessagesIds[a].keyAt(b);
+                                if (k > 0) ids.add(k);
+                            }
+                        }
+                        if (!ids.isEmpty()) {
+                            java.util.Collections.sort(ids);
+                            int rangeBegin = Math.min(ids.get(0), pressedMsg.getId());
+                            int rangeEnd = Math.max(ids.get(ids.size() - 1), pressedMsg.getId());
+                            for (int i = 0; i < messages.size(); i++) {
+                                MessageObject msg = messages.get(i);
+                                int msgId = msg.getId();
+                                if (msgId >= rangeBegin && msgId <= rangeEnd
+                                        && selectedMessagesIds[0].indexOfKey(msgId) < 0
+                                        && selectedMessagesIds[1].indexOfKey(msgId) < 0) {
+                                    addToSelectedMessages(msg, false);
+                                }
+                            }
+                            updateActionModeTitle();
+                            updateVisibleRows();
+                        } else {
+                            processRowSelect(view, outside, x, y);
+                        }
+                    } else {
+                        processRowSelect(view, outside, x, y);
+                    }
+                } else {
+                    processRowSelect(view, outside, x, y);
+                }
             }
             if (view instanceof ChatMessageCell && (((ChatMessageCell) view).getMessageObject() != null && ((ChatMessageCell) view).getMessageObject().type != MessageObject.TYPE_JOINED_CHANNEL)) {
                 startMultiselect(position);
@@ -1797,11 +1842,7 @@ public class ChatActivity extends BaseFragment implements
                         return;
                     }
                     if (messageObject.contentType == 0) {
-                        if (selected && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100) {
-                            limitReached = true;
-                        } else {
-                            limitReached = false;
-                        }
+                        limitReached = false; // VortexGram: no selection limit
                         RecyclerView.ViewHolder holder = chatListView.findViewHolderForAdapterPosition(position);
                         if (holder != null && holder.itemView instanceof ChatMessageCell) {
                             processRowSelect(holder.itemView, false, x, y);
@@ -4016,6 +4057,8 @@ public class ChatActivity extends BaseFragment implements
                     if (!getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId(), true)) {
                         updateTopPanel(true);
                     }
+                } else if (id == export_messages) {
+                    exportOtherPartyMessages();
                 } else if (id == call || id == video_call) {
                     if (currentUser != null && getParentActivity() != null) {
                         VoIPHelper.startCall(currentUser, id == video_call, userInfo != null && userInfo.video_calls_available, getParentActivity(), getMessagesController().getUserFull(currentUser.id), getAccountInstance());
@@ -4561,6 +4604,9 @@ public class ChatActivity extends BaseFragment implements
         if (currentChat != null && forumTopic != null && chatMode == 0) {
             closeTopicItem = headerItem.lazilyAddSubItem(topic_close, R.drawable.msg_topic_close, LocaleController.getString(R.string.CloseTopic));
             closeTopicItem.setVisibility(currentChat != null && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) && forumTopic != null && !forumTopic.closed ? View.VISIBLE : View.GONE);
+        }
+        if (headerItem != null && currentUser != null && !UserObject.isUserSelf(currentUser)) {
+            headerItem.lazilyAddSubItem(export_messages, R.drawable.msg_saved, "Export Their Messages");
         }
         menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
 
@@ -19373,14 +19419,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
             } else {
-                if (selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100) {
-                    AndroidUtilities.shakeView(selectedMessagesCountTextView);
-                    Vibrator vibrator = (Vibrator) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (vibrator != null) {
-                        vibrator.vibrate(200);
-                    }
-                    return;
-                }
+                // VortexGram: no selection limit
                 selectedMessagesIds[index].put(messageObject.getId(), messageObject);
                 if (!isReport()) {
                     if ((messageObject.type == MessageObject.TYPE_TEXT || messageObject.isAnimatedEmoji() || messageObject.caption != null) && !(messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) {
@@ -19639,6 +19678,49 @@ public class ChatActivity extends BaseFragment implements
             }
             selectionReactionsOverlay.setSelectedMessages(selected);
         }
+    }
+
+    private void exportOtherPartyMessages() {
+        new Thread(() -> {
+            try {
+                java.util.ArrayList<MessageObject> toExport = new java.util.ArrayList<>();
+                for (int i = messages.size() - 1; i >= 0; i--) {
+                    MessageObject msg = messages.get(i);
+                    if (!msg.isOut() && !msg.isDateObject && msg.getId() > 0 && msg.contentType == 0) {
+                        toExport.add(msg);
+                    }
+                }
+                if (toExport.isEmpty()) {
+                    AndroidUtilities.runOnUIThread(() -> Toast.makeText(ApplicationLoader.applicationContext, "No messages to export", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                String chatName = currentUser != null
+                        ? ContactsController.formatName(currentUser.first_name, currentUser.last_name)
+                        : (currentChat != null ? currentChat.title : "chat");
+                chatName = chatName.replaceAll("[^\\w\\-]", "_");
+                String filename = "export_" + chatName + "_" + System.currentTimeMillis() + ".txt";
+                java.io.File downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
+                if (!downloadsDir.exists()) {
+                    downloadsDir.mkdirs();
+                }
+                java.io.File outFile = new java.io.File(downloadsDir, filename);
+                StringBuilder sb = new StringBuilder();
+                for (MessageObject msg : toExport) {
+                    String text = msg.messageOwner.message;
+                    if (!TextUtils.isEmpty(text)) {
+                        sb.append(text).append("\n");
+                    }
+                }
+                java.io.FileWriter fw = new java.io.FileWriter(outFile);
+                fw.write(sb.toString());
+                fw.close();
+                final int count = toExport.size();
+                final String path = outFile.getAbsolutePath();
+                AndroidUtilities.runOnUIThread(() -> Toast.makeText(ApplicationLoader.applicationContext, count + " messages exported to\n" + path, Toast.LENGTH_LONG).show());
+            } catch (Exception e) {
+                AndroidUtilities.runOnUIThread(() -> Toast.makeText(ApplicationLoader.applicationContext, "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
     }
 
     private void processRowSelect(View view, boolean outside, float touchX, float touchY) {
@@ -33606,6 +33688,16 @@ public class ChatActivity extends BaseFragment implements
         }
         boolean preserveDim = false;
         switch (option) {
+            case AyuConstants.OPTION_HISTORY:
+                presentFragment(new AyuMessageHistory(selectedObject));
+                break;
+            case AyuConstants.OPTION_TTL:
+                AyuState.setAllowReadPacket(true, 1);
+                sendSecretMessageRead(selectedObject, true);
+                break;
+            case AyuConstants.OPTION_READ_UNTIL:
+                AyuGhostUtils.markReadOnServer(currentAccount, selectedObject.messageOwner.id, getMessagesController().getInputPeer(selectedObject.messageOwner.peer_id));
+                break;
             case OPTION_RETRY: {
                 final MessageObject object = selectedObject;
                 final MessageObject.GroupedMessages group = selectedObjectGroup;
@@ -37738,6 +37830,9 @@ public class ChatActivity extends BaseFragment implements
                 ChatMessageUnsupportedCell cell = new ChatMessageUnsupportedCell(mContext, themeDelegate);
                 cell.setDelegate(getChatMessageCellDelegate());
                 view = cell;
+            } else if (viewType == -1000) {
+                // VortexGram: filtered-out message, rendered as a 1px stand-in
+                view = new DummyView(mContext);
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
@@ -38346,6 +38441,8 @@ public class ChatActivity extends BaseFragment implements
                     if (createUnreadMessageAfterId != 0) {
                         createUnreadMessageAfterId = 0;
                     }
+                } else if (view instanceof DummyView) {
+                    ((DummyView) view).setMessageObject(message);
                 }
             }
         }
@@ -38369,7 +38466,18 @@ public class ChatActivity extends BaseFragment implements
                 } else {
                     messages = ChatActivity.this.messages;
                 }
-                return messages.get(position - messagesStartRow).contentType;
+                MessageObject msg = messages.get(position - messagesStartRow);
+
+                // VortexGram: hide messages matched by a user-defined regex filter
+                if (AyuConfig.regexFiltersEnabled && (AyuConfig.regexFiltersInChats || ChatObject.isChannel(currentChat))) {
+                    MessageObject.GroupedMessages group = getGroup(msg.getGroupId());
+                    MessageObject msgToCheck = group == null ? msg : group.findPrimaryMessageObject();
+                    if (AyuFilter.isFiltered(msgToCheck, group)) {
+                        return -1000;
+                    }
+                }
+
+                return msg.contentType;
             } else if (position == botInfoRow) {
                 return 3;
             } else if (position == userInfoRow) {
@@ -46590,6 +46698,23 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Edit));
                     options.add(OPTION_EDIT);
                     icons.add(R.drawable.msg_edit);
+                }
+                if (message != null && AyuMessagesController.getInstance().hasAnyRevisions(getUserConfig().getClientUserId(), dialog_id, message.getId())) {
+                    items.add(LocaleController.getString(R.string.EditsHistoryMenuText));
+                    options.add(AyuConstants.OPTION_HISTORY);
+                    icons.add(R.drawable.msg_log);
+                }
+                if (message != null && message.messageOwner != null && message.messageOwner.ttl > 0) {
+                    items.add("TTL: " + LocaleController.formatTTLString(message.messageOwner.ttl));
+                    options.add(AyuConstants.OPTION_TTL);
+                    icons.add(R.drawable.msg_autodelete);
+                }
+                if (!AyuConfig.sendReadPackets && message != null && message.messageOwner != null
+                        && message.messageOwner.from_id != null
+                        && message.messageOwner.from_id.user_id != getUserConfig().getClientUserId()) {
+                    items.add(LocaleController.getString(R.string.ReadUntilMenuText));
+                    options.add(AyuConstants.OPTION_READ_UNTIL);
+                    icons.add(R.drawable.msg_view_file);
                 }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
                     items.add(LocaleController.getString(R.string.EditOfferAdd));

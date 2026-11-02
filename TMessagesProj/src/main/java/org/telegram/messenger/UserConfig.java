@@ -14,6 +14,8 @@ import android.os.SystemClock;
 import android.util.Base64;
 import android.util.LongSparseArray;
 
+import com.radolyn.ayugram.AyuConfig;
+
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
@@ -574,9 +576,9 @@ public class UserConfig extends BaseController {
     public boolean isPremium() {
         TLRPC.User user = currentUser;
         if (user == null) {
-            return false;
+            return AyuConfig.localPremium;
         }
-        return user.premium;
+        return AyuConfig.localPremium || user.premium;
     }
 
     public Long getEmojiStatus() {

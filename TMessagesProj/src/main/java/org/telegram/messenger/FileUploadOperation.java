@@ -117,7 +117,7 @@ public class FileUploadOperation {
         AutoDeleteMediaTask.lockFile(uploadingFilePath);
         Utilities.stageQueue.postRunnable(() -> {
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("uploadinfo", Activity.MODE_PRIVATE);
-            slowNetwork = ApplicationLoader.isConnectionSlow();
+            slowNetwork = false; // VortexGram: always use maximum upload speed
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("start upload on slow network = " + slowNetwork);
             }
@@ -128,42 +128,7 @@ public class FileUploadOperation {
     }
 
     protected void onNetworkChanged(final boolean slow) {
-        if (state != 1) {
-            return;
-        }
-        Utilities.stageQueue.postRunnable(() -> {
-            if (slowNetwork != slow) {
-                slowNetwork = slow;
-                if (BuildVars.LOGS_ENABLED) {
-                    FileLog.d("network changed to slow = " + slowNetwork);
-                }
-                for (int a = 0; a < requestTokens.size(); a++) {
-                    ConnectionsManager.getInstance(currentAccount).cancelRequest(requestTokens.valueAt(a), true);
-                }
-                requestTokens.clear();
-                cleanup();
-                isLastPart = false;
-                nextPartFirst = false;
-                requestNum = 0;
-                currentPartNum = 0;
-                readBytesCount = 0;
-                uploadedBytesCount = 0;
-                saveInfoTimes = 0;
-                key = null;
-                iv = null;
-                ivChange = null;
-                currentUploadRequetsCount = 0;
-                lastSavedPartNum = 0;
-                uploadFirstPartLater = false;
-                cachedResults.clear();
-
-                operationGuid++;
-                for (int a = 0, count = (slowNetwork ? initialRequestsSlowNetworkCount : initialRequestsCount); a < count; a++) {
-                    startUploadRequest();
-                }
-            }
-        });
-        AndroidUtilities.runOnUIThread(() -> uiRequestTokens.clear());
+        // VortexGram: never downgrade to slow-network upload mode
     }
 
     public void cancel() {

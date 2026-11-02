@@ -20,6 +20,10 @@ import static org.telegram.ui.Stories.HighlightMessageSheet.parseTiersString;
 import static org.telegram.ui.Stories.HighlightMessageSheet.tiersEqual;
 import static org.telegram.ui.Stories.HighlightMessageSheet.tiersToString;
 
+import com.radolyn.ayugram.AyuConfig;
+import com.radolyn.ayugram.messages.AyuMessagesController;
+import com.radolyn.ayugram.messages.AyuSavePreferences;
+
 import android.Manifest;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -926,7 +930,8 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isPremiumUser(TLRPC.User currentUser) {
-        return currentUser != null && currentUser.premium && !isSupportUser(currentUser);
+        return currentUser != null && !isSupportUser(currentUser) &&
+                (currentUser.premium || currentUser.id == getUserConfig().getClientUserId() && AyuConfig.localPremium);
     }
 
     public boolean didPressTranscribeButtonEnough() {
@@ -6687,16 +6692,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isChatNoForwards(TLRPC.Chat chat) {
-        if (chat == null) {
-            return false;
-        }
-        if (chat.migrated_to != null) {
-            TLRPC.Chat migratedTo = getChat(chat.migrated_to.channel_id);
-            if (migratedTo != null) {
-                return migratedTo.noforwards;
-            }
-        }
-        return chat.noforwards;
+        return false;
     }
 
     public boolean isChatNoForwards(long chatId) {
@@ -6712,11 +6708,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isUserNoForwards(TLRPC.UserFull userFull) {
-        if (userFull == null) {
-            return false;
-        }
-
-        return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled;
+        return false;
     }
 
     public TLRPC.User getUser(Long id) {
@@ -19524,6 +19516,14 @@ public class MessagesController extends BaseController implements NotificationCe
                     message.attachPath = "";
                 }
 
+                if (AyuConfig.saveEditedMessageFor(currentAccount, message.dialog_id)) {
+                    TLRPC.Message oldMessageForHistory = getMessagesStorage().getMessage(message.dialog_id, message.id);
+                    if (oldMessageForHistory != null) {
+                        AyuSavePreferences ayuEditPrefs = new AyuSavePreferences(oldMessageForHistory, currentAccount);
+                        AyuMessagesController.getInstance().onMessageEdited(ayuEditPrefs, message);
+                    }
+                }
+
                 ImageLoader.saveMessageThumbs(message);
                 AndroidUtilities.runOnUIThread(() -> {
                     getSendMessagesHelper().onMessageEdited(message);
@@ -21265,10 +21265,20 @@ public class MessagesController extends BaseController implements NotificationCe
             }
         }
         if (deletedMessages != null) {
+            int deletedCurrentAccount = currentAccount;
             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                 long key = deletedMessages.keyAt(a);
                 ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
                 getMessagesStorage().getStorageQueue().postRunnable(() -> {
+                    for (int b = 0, msgCount = arrayList.size(); b < msgCount; b++) {
+                        int msgId = arrayList.get(b);
+                        TLRPC.Message deletedMsg = key != 0 ? getMessagesStorage().getMessageInternal(key, msgId) : getMessagesStorage().getMessageIgnoringDialogInternal(msgId);
+                        if (deletedMsg != null && AyuConfig.saveDeletedMessageFor(deletedCurrentAccount, deletedMsg.dialog_id)) {
+                            AyuSavePreferences ayuDeletePrefs = new AyuSavePreferences(deletedMsg, deletedCurrentAccount);
+                            AyuMessagesController.getInstance().onMessageDeleted(ayuDeletePrefs);
+                        }
+                    }
+
                     ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsDeleted(key, arrayList, false, true, 0, 0);
                     getMessagesStorage().updateDialogsWithDeletedMessages(key, -key, arrayList, dialogIds);
                 });

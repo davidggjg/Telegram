@@ -105,7 +105,8 @@ public class PhotoViewerCoverEditor extends FrameLayout {
         } else {
             time = player.getCurrentPosition();
         }
-        timelineView.setVideo(false, player.getCurrentUri().getPath(), player.getDuration(), player.player.getVolume());
+        String videoPath = entry.path != null && !entry.path.isEmpty() ? entry.path : player.getCurrentUri().getPath();
+        timelineView.setVideo(false, videoPath, player.getDuration(), player.player.getVolume());
         final long duration = player.getDuration();
         final float regionLength = 2.8f / Math.max(60, duration);
         float left = (float) time / Math.max(1, player.getDuration()) * (1f - regionLength);
