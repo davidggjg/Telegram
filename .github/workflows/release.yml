@@ -39,8 +39,16 @@ jobs:
           key: ccache
           restore-keys: ccache
 
+      # android-actions/setup-android fails on current runners: it tries to
+      # install the long-obsolete 'tools' package and aborts before Gradle runs.
+      # The runner image already ships an Android SDK, so use it directly.
       - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          yes | "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager \
+            "platforms;android-35" "build-tools;35.0.0" \
+            "ndk;27.2.12479018" "cmake;3.22.1"
 
       - name: Prepare Environment
         run: |

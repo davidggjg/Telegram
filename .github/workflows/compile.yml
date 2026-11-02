@@ -1,0 +1,36 @@
+name: Compile check
+
+# Fast feedback on every push: compiles all Java sources for the real release
+# variant. Deliberately does NOT build the NDK code or an APK, so a work in
+# progress push never produces something that looks installable.
+on:
+  push:
+    branches:
+      - 'claude/**'
+  workflow_dispatch:
+
+concurrency:
+  group: compile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Install SDK packages
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          yes | "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager \
+            "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Compile Java (no NDK, no APK)
+        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace
