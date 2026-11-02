@@ -21358,6 +21358,16 @@ public class ChatActivity extends BaseFragment implements
         if (currentEncryptedChat == null && chatMode != MODE_QUICK_REPLIES) {
             getMediaDataController().loadReplyMessagesForMessages(messArr, dialog_id, chatMode, 0, null, classGuid, null);
         }
+        // VortexGram: put saved deleted messages back into the loaded range.
+        // Without this they are recorded but never shown, so a deleted message
+        // simply disappears and the feature looks like it does nothing.
+        if (com.radolyn.ayugram.AyuConfig.saveDeletedMessages && mode == MODE_DEFAULT && !messArr.isEmpty()) {
+            Pair<Integer, Integer> vortexIds = com.radolyn.ayugram.proprietary.AyuHistoryHook.getMinAndMaxIds(messArr);
+            com.radolyn.ayugram.proprietary.AyuHistoryHook.doHook(
+                    currentAccount, messArr, messagesDict,
+                    vortexIds.first, vortexIds.second,
+                    dialog_id, count, getTopicId(), isSecretChat());
+        }
         int approximateHeightSum = 0;
         if (!chatWasReset && (load_type == 2 || load_type == 1) && messArr.isEmpty() && !isCache) {
             forwardEndReached[0] = true;

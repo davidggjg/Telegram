@@ -1,90 +1,98 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  VortexGram's own settings strings, in Hebrew.
+
+  These are the default values on purpose. Telegram resolves strings through a
+  generated asset chosen by its own locale handling, which does not reliably
+  land on values-iw when a cloud language pack is in use, so relying on the
+  translation directory left these showing in English.
+-->
 <resources>
-  <string name="AyuPreferences">VortexGram Preferences</string>
-  <string name="AyuPreferencesInfo">Premium unlock, message history, filters</string>
+  <string name="AyuPreferences">הגדרות VortexGram</string>
+  <string name="AyuPreferencesInfo">פתיחת פרימיום, היסטוריית הודעות, פילטרים</string>
 
-  <string name="SpyEssentialsHeader">Spy essentials</string>
-  <string name="SaveDeletedMessages">Save deleted messages</string>
-  <string name="SaveMessagesHistory">Save edits history</string>
+  <string name="SpyEssentialsHeader">שמירת היסטוריה</string>
+  <string name="SaveDeletedMessages">שמור הודעות שנמחקו</string>
+  <string name="SaveMessagesHistory">שמור היסטוריית עריכות</string>
 
-  <string name="MessageSavingBtn">Message Saving Preferences</string>
-  <string name="MessageSavingSaveMedia">Save media</string>
-  <string name="MessageSavingSaveMediaHint">Click for more</string>
-  <string name="MessageSavingSaveMediaInPrivateChats">…in private chats</string>
-  <string name="MessageSavingSaveMediaInPublicChannels">…in public channels</string>
-  <string name="MessageSavingSaveMediaInPrivateChannels">…in private channels</string>
-  <string name="MessageSavingSaveMediaInPublicGroups">…in public groups</string>
-  <string name="MessageSavingSaveMediaInPrivateGroups">…in private groups</string>
-  <string name="MessageSavingSaveFormatting">Save formatting</string>
-  <string name="MessageSavingSaveReactions">Save reactions</string>
-  <string name="MessageSavingSaveForBots">Save in bot dialogs</string>
+  <string name="MessageSavingBtn">העדפות שמירת הודעות</string>
+  <string name="MessageSavingSaveMedia">שמור מדיה</string>
+  <string name="MessageSavingSaveMediaHint">לחץ לפרטים נוספים</string>
+  <string name="MessageSavingSaveMediaInPrivateChats">…בצ\'אטים פרטיים</string>
+  <string name="MessageSavingSaveMediaInPublicChannels">…בערוצים ציבוריים</string>
+  <string name="MessageSavingSaveMediaInPrivateChannels">…בערוצים פרטיים</string>
+  <string name="MessageSavingSaveMediaInPublicGroups">…בקבוצות ציבוריות</string>
+  <string name="MessageSavingSaveMediaInPrivateGroups">…בקבוצות פרטיות</string>
+  <string name="MessageSavingSaveFormatting">שמור עיצוב טקסט</string>
+  <string name="MessageSavingSaveReactions">שמור תגובות</string>
+  <string name="MessageSavingSaveForBots">שמור בשיחות עם בוטים</string>
 
-  <string name="QoLTogglesHeader">Useful features</string>
-  <string name="KeepAliveService">VortexGram Push Service</string>
-  <string name="DisableAds">Disable ads</string>
-  <string name="LocalPremium">Local Telegram Premium</string>
-  <string name="AntiKick">Anti-kick (stay in chat when removed)</string>
-  <string name="GhostModeToggle">Ghost mode (hide online/read status)</string>
+  <string name="QoLTogglesHeader">תכונות שימושיות</string>
+  <string name="KeepAliveService">שירות Push של VortexGram</string>
+  <string name="DisableAds">השבת פרסומות</string>
+  <string name="LocalPremium">פרימיום מקומי (בלי מנוי)</string>
+  <string name="AntiKick">אנטי-כיק (הישאר בצ\'אט גם אחרי הסרה)</string>
+  <string name="GhostModeToggle">מצב רפאים (הסתר סטטוס מחובר/נקרא)</string>
 
-  <string name="CustomizationHeader">Customization</string>
-  <string name="DeletedMarkText">Deleted mark</string>
-  <string name="EditedMarkText">Edited mark</string>
+  <string name="CustomizationHeader">התאמה אישית</string>
+  <string name="DeletedMarkText">סימון הודעה שנמחקה</string>
+  <string name="EditedMarkText">סימון הודעה שנערכה</string>
 
-  <string name="RegexFilters">Message Filters</string>
-  <string name="RegexFiltersAmount">filters</string>
-  <string name="RegexFiltersHeader">Filters</string>
-  <string name="RegexFiltersEnableInChats">Enable in chats</string>
-  <string name="RegexFiltersCaseInsensitive">Case insensitive expressions</string>
-  <string name="RegexFiltersAdd">Add filter</string>
-  <string name="RegexFiltersEdit">Edit filter</string>
-  <string name="RegexFiltersAddDescription">You can use site <![CDATA[<a href="https://regex101.com">regex101.com</a>]]> to fully test your regular expression.
-    You can also use plain text, but don\'t forget to escape brackets.</string>
-  <string name="RegexFiltersAddError">Regex syntax error</string>
+  <string name="RegexFilters">פילטרי הודעות</string>
+  <string name="RegexFiltersAmount">פילטרים</string>
+  <string name="RegexFiltersHeader">פילטרים</string>
+  <string name="RegexFiltersEnableInChats">הפעל בשיחות</string>
+  <string name="RegexFiltersCaseInsensitive">התעלם מרישיות (A=a)</string>
+  <string name="RegexFiltersAdd">הוסף פילטר</string>
+  <string name="RegexFiltersEdit">ערוך פילטר</string>
+  <string name="RegexFiltersAddDescription">ניתן להשתמש באתר <![CDATA[<a href="https://regex101.com">regex101.com</a>]]> לבדיקת הביטוי.
+    אפשר גם להשתמש בטקסט רגיל, אך יש לבצע escape לסוגריים.</string>
+  <string name="RegexFiltersAddError">שגיאת תחביר בביטוי רגולרי</string>
 
-  <string name="EditsHistoryTitle">Edits history</string>
-  <string name="EditsHistoryMenuText">History</string>
-  <string name="ReadUntilMenuText">Mark read until here</string>
+  <string name="EditsHistoryTitle">היסטוריית עריכות</string>
+  <string name="EditsHistoryMenuText">היסטוריה</string>
+  <string name="ReadUntilMenuText">סמן כנקרא עד כאן</string>
 
-  <string name="WALMode">Enable WAL mode</string>
-  <string name="ClearAyuDatabase">Clear VortexGram Database</string>
-  <string name="ClearAyuDatabaseNotification">VortexGram database cleared</string>
+  <string name="WALMode">הפעל מצב WAL (מאגר כתיבה)</string>
+  <string name="ClearAyuDatabase">נקה מסד נתונים של VortexGram</string>
+  <string name="ClearAyuDatabaseNotification">מסד הנתונים של VortexGram נוקה</string>
 
-  <string name="RestartRequired">Restart the App to take effect.</string>
+  <string name="RestartRequired">יש להפעיל מחדש את האפליקציה כדי להחיל את השינוי.</string>
 
-  <string name="BackgroundTransfers">Keep transfers running in background</string>
-  <string name="TransferDownloading">Downloading %1$d file(s)</string>
-  <string name="TransferUploading">Uploading %1$d file(s)</string>
-  <string name="TransferBoth">Downloading %1$d, uploading %2$d file(s)</string>
+  <string name="BackgroundTransfers">המשך הורדות והעלאות ברקע</string>
+  <string name="TransferDownloading">מוריד %1$d קבצים</string>
+  <string name="TransferUploading">מעלה %1$d קבצים</string>
+  <string name="TransferBoth">מוריד %1$d, מעלה %2$d קבצים</string>
 
   <!-- Archived chats and bulk media download -->
-  <string name="VortexArchivedChats">Archived chats</string>
-  <string name="VortexArchivedChatsInfo">Groups and channels you left, or were removed from. Their history stays here after Telegram drops it.</string>
-  <string name="VortexArchivedChatsEmpty">Nothing archived yet</string>
-  <string name="VortexArchivedChatsEmptyInfo">When you leave a group or channel, or one removes you, its history is kept here automatically.</string>
-  <string name="VortexArchivedChatsHeader">Kept history</string>
-  <string name="VortexArchiveLeftChats">Keep history of chats I leave</string>
-  <string name="VortexArchiveLeftChatsInfo">Saves a group or channel\'s history before Telegram deletes it, so you can still read it after leaving or being removed.</string>
-  <string name="VortexArchiveThisChat">Keep history in archive</string>
-  <string name="VortexArchiveThisChatDone">History is being archived</string>
-  <string name="VortexArchivedChatReasonLeft">You left</string>
-  <string name="VortexArchivedChatReasonRemoved">You were removed</string>
-  <string name="VortexArchivedChatReasonDeleted">Chat deleted</string>
-  <string name="VortexArchivedChatReasonSaved">Kept by you</string>
-  <string name="VortexArchivedChatMessagesCount">%1$d messages</string>
-  <string name="VortexArchivedChatMediaMissing">Media was never downloaded, so it could not be kept</string>
-  <string name="VortexArchivedChatOpenMedia">Open</string>
-  <string name="VortexArchivedChatDelete">Remove from archive</string>
-  <string name="VortexArchivedChatDeleteConfirm">Delete the kept history of %1$s? This cannot be undone.</string>
-  <string name="VortexArchivedChatEmptyMessages">No messages were kept for this chat</string>
-  <string name="VortexDownloadAllMedia">Download all photos and videos</string>
-  <string name="VortexDownloadAllScanning">Grabbing all media…</string>
-  <string name="VortexDownloadAllNothing">No photos or videos found here</string>
-  <string name="VortexDownloadAllStarted">Downloading %1$d files</string>
-  <string name="VortexDownloadAllRunning">A bulk download is already running</string>
-  <string name="VortexDownloadAllFailed">Could not list the media in this chat</string>
-  <string name="VortexDownloadNow">Download</string>
+  <string name="VortexArchivedChats">צ\'אטים בארכיון</string>
+  <string name="VortexArchivedChatsInfo">קבוצות וערוצים שיצאת מהם או שהוסרת מהם. ההיסטוריה נשמרת כאן גם אחרי שטלגרם מוחק אותה.</string>
+  <string name="VortexArchivedChatsEmpty">אין עדיין כלום בארכיון</string>
+  <string name="VortexArchivedChatsEmptyInfo">כשתצא מקבוצה או מערוץ, או שיסירו אותך, ההיסטוריה תישמר כאן אוטומטית.</string>
+  <string name="VortexArchivedChatsHeader">היסטוריה שנשמרה</string>
+  <string name="VortexArchiveLeftChats">שמור היסטוריה של צ\'אטים שיצאתי מהם</string>
+  <string name="VortexArchiveLeftChatsInfo">שומר את ההיסטוריה של קבוצה או ערוץ לפני שטלגרם מוחק אותה, כדי שתוכל לקרוא אותה גם אחרי יציאה או הסרה.</string>
+  <string name="VortexArchiveThisChat">שמור היסטוריה בארכיון</string>
+  <string name="VortexArchiveThisChatDone">ההיסטוריה נשמרת לארכיון</string>
+  <string name="VortexArchivedChatReasonLeft">יצאת</string>
+  <string name="VortexArchivedChatReasonRemoved">הוסרת</string>
+  <string name="VortexArchivedChatReasonDeleted">הצ\'אט נמחק</string>
+  <string name="VortexArchivedChatReasonSaved">נשמר על ידך</string>
+  <string name="VortexArchivedChatMessagesCount">%1$d הודעות</string>
+  <string name="VortexArchivedChatMediaMissing">המדיה מעולם לא הורדה, ולכן לא נשמרה</string>
+  <string name="VortexArchivedChatOpenMedia">פתח</string>
+  <string name="VortexArchivedChatDelete">הסר מהארכיון</string>
+  <string name="VortexArchivedChatDeleteConfirm">למחוק את ההיסטוריה השמורה של %1$s? אי אפשר לבטל את זה.</string>
+  <string name="VortexArchivedChatEmptyMessages">לא נשמרו הודעות עבור הצ\'אט הזה</string>
+  <string name="VortexDownloadAllMedia">הורד את כל התמונות והסרטונים</string>
+  <string name="VortexDownloadAllScanning">אוסף את כל המדיה…</string>
+  <string name="VortexDownloadAllNothing">לא נמצאו כאן תמונות או סרטונים</string>
+  <string name="VortexDownloadAllStarted">מוריד %1$d קבצים</string>
+  <string name="VortexDownloadAllRunning">כבר רצה הורדה מרוכזת</string>
+  <string name="VortexDownloadAllFailed">לא ניתן לקבל את רשימת המדיה בצ\'אט הזה</string>
+  <string name="VortexDownloadNow">הורד</string>
 
   <!-- Extra toggles ported from the AyuGram / exteraGram builds -->
-  <string name="DisableSimilarChannels">Disable Similar Channels</string>
-  <string name="HideChannelReactions">Hide Reactions in Channels</string>
+  <string name="DisableSimilarChannels">בטל ערוצים דומים</string>
+  <string name="HideChannelReactions">הסתר ריאקציות בערוצים</string>
 </resources>

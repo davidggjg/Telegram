@@ -9,6 +9,13 @@
 
 package com.radolyn.ayugram.proprietary;
 
+import android.util.Pair;
+import android.util.SparseArray;
+import com.radolyn.ayugram.messages.AyuMessagesController;
+import org.telegram.messenger.ChatObject;
+import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.MessageObject;
 import android.text.TextUtils;
 import com.radolyn.ayugram.AyuConstants;
 import com.radolyn.ayugram.database.entities.AyuMessageBase;
@@ -19,6 +26,59 @@ import org.telegram.tgnet.TLRPC;
 import java.util.ArrayList;
 
 public class AyuHistoryHook {
+
+    public static Pair<Integer, Integer> getMinAndMaxIds(ArrayList<MessageObject> messArr) {
+        if (messArr.isEmpty()) {
+            return Pair.create(0, 0);
+        }
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        for (MessageObject msg : messArr) {
+            int id = msg.messageOwner.id;
+            if (id < min) min = id;
+            if (id > max) max = id;
+        }
+        return Pair.create(min, max);
+    }
+
+    public static void doHook(int currentAccount, ArrayList<MessageObject> messArr, SparseArray<MessageObject>[] messagesDict, int startId, int endId, long dialogId, int limit, long topicId, boolean isSecretChat) {
+        if (isSecretChat) {
+            return;
+        }
+        try {
+            long userId = UserConfig.getInstance(currentAccount).getClientUserId();
+            var deleted = AyuMessagesController.getInstance().getMessages(userId, dialogId, topicId, startId, endId, limit);
+            if (deleted == null || deleted.isEmpty()) {
+                return;
+            }
+            for (var full : deleted) {
+                var dm = full.message;
+                boolean found = false;
+                for (var m : messArr) {
+                    if (m.messageOwner.id == dm.messageId) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    continue;
+                }
+                var tlMsg = new TLRPC.TL_message();
+                mapFromBase(dm, tlMsg, currentAccount);
+                mapMediaFromBase(dm, tlMsg);
+                var messageObject = new MessageObject(currentAccount, tlMsg, false, true);
+                messArr.add(messageObject);
+                if (messagesDict != null) {
+                    int index = messageObject.getDialogId() == dialogId ? 0 : 1;
+                    if (index < messagesDict.length && messagesDict[index] != null) {
+                        messagesDict[index].put(messageObject.getId(), messageObject);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            FileLog.e("AyuHistoryHook.doHook", e);
+        }
+    }
 
     static void mapFromBase(AyuMessageBase base, TLRPC.Message msg, int currentAccount) {
         msg.id = base.messageId;
