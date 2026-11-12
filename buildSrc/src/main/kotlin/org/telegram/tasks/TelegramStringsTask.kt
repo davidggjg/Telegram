@@ -89,11 +89,17 @@ abstract class TelegramStringsTask : DefaultTask() {
         // Union of all string resources defined in all localizations.
         val allStrings = sortedSetOf<String>()
 
+        // VortexGram's own strings, kept out of the discard list below.
+        val forkStrings = sortedSetOf<String>()
+
         for (file in defaultLocalizationFiles) {
             collectStrings(
                 file = file,
                 destination = allStrings
             )
+            if (file.name == "ayu.xml") {
+                collectStrings(file = file, destination = forkStrings)
+            }
         }
 
         val localizationInputFiles = localizationFiles.files.toList()
@@ -149,7 +155,8 @@ abstract class TelegramStringsTask : DefaultTask() {
         // the same generated placeholders from resource shrinker's safe-mode heuristics.
         generateResourceShrinkerRules(
             stringsDir = stringsDir,
-            strings = allStrings
+            strings = allStrings,
+            keep = forkStrings
         )
 
         generateStableIds(
@@ -249,14 +256,21 @@ abstract class TelegramStringsTask : DefaultTask() {
 
     private fun generateResourceShrinkerRules(
         stringsDir: File,
-        strings: Set<String>
+        strings: Set<String>,
+        keep: Set<String> = emptySet()
     ) {
         val rawDir = stringsDir.resolve("raw")
         rawDir.mkdirs()
 
+        // Discarded strings are served from the generated asset instead of
+        // from resources, so anything still resolving one through
+        // Resources.getString() dies with Resources$NotFoundException. Our own
+        // strings stay in the APK as well, which costs a few kilobytes and
+        // removes that failure mode for them entirely.
         val discard = strings
             .asSequence()
             .filterNot { GENERATED_EXCLUSIONS.contains(it) }
+            .filterNot { keep.contains(it) }
             .joinToString(", ") { "@string/$it" }
 
         rawDir.resolve("strings_discard.xml")
