@@ -408,6 +408,19 @@ public class ConnectionsManager extends BaseController {
         if (!com.radolyn.ayugram.AyuConfig.sendOnlinePackets && object instanceof org.telegram.tgnet.tl.TL_account.updateStatus) {
             ((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline = true;
         }
+        // VortexGram: this switch had nothing reading it. When an online status
+        // does go out, follow it with an offline one so "last seen" settles back
+        // immediately instead of staying lit while the app is open.
+        if (com.radolyn.ayugram.AyuConfig.sendOfflinePacketAfterOnline
+                && object instanceof org.telegram.tgnet.tl.TL_account.updateStatus
+                && !((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline) {
+            final int offlineAccount = currentAccount;
+            org.telegram.messenger.AndroidUtilities.runOnUIThread(() -> {
+                org.telegram.tgnet.tl.TL_account.updateStatus offlineReq = new org.telegram.tgnet.tl.TL_account.updateStatus();
+                offlineReq.offline = true;
+                ConnectionsManager.getInstance(offlineAccount).sendRequest(offlineReq, null);
+            }, 1000);
+        }
         if (!com.radolyn.ayugram.AyuConfig.sendReadPackets &&
                 (object instanceof TLRPC.TL_messages_readHistory ||
                         object instanceof TLRPC.TL_messages_readEncryptedHistory ||

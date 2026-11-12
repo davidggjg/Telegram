@@ -4480,6 +4480,25 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
     }
 
     public void sendMessage(SendMessageParams sendMessageParams) {
+        // VortexGram: this switch had nothing reading it. Ghost Mode swallows
+        // read receipts, so a chat you just wrote in stays unread; sending is
+        // proof you were there, so clear it on the server.
+        if (com.radolyn.ayugram.AyuConfig.markReadAfterSend
+                && !com.radolyn.ayugram.AyuConfig.sendReadPackets
+                && sendMessageParams != null && sendMessageParams.peer != 0) {
+            try {
+                long vortexPeerId = sendMessageParams.peer;
+                Integer vortexRead = getMessagesController().dialogs_read_inbox_max.get(vortexPeerId);
+                int vortexMaxId = vortexRead == null ? 0 : vortexRead;
+                TLRPC.InputPeer vortexInputPeer = getMessagesController().getInputPeer(vortexPeerId);
+                if (vortexInputPeer != null) {
+                    com.radolyn.ayugram.utils.AyuGhostUtils.markReadOnServer(
+                            currentAccount, vortexMaxId, vortexInputPeer);
+                }
+            } catch (Exception e) {
+                FileLog.e("VortexGram markReadAfterSend", e);
+            }
+        }
         final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                 sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
         String message = sendMessageParams.message;
