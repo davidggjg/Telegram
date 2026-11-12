@@ -73,7 +73,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
      */
     private void killApp() {
         try {
-            ConnectionsManager.getInstance(currentAccount).setAppPaused(true, false);
+            org.telegram.tgnet.ConnectionsManager.getInstance(currentAccount).setAppPaused(true, false);
         } catch (Exception ignored) {
         }
         try {
