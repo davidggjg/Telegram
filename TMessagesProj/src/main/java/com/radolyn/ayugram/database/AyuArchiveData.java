@@ -26,6 +26,9 @@ public class AyuArchiveData {
     public static void create() {
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuArchiveDatabase.class, DATABASE_NAME)
                 .allowMainThreadQueries()
+                .setJournalMode(com.radolyn.ayugram.AyuConfig.WALMode
+                        ? androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
+                        : androidx.room.RoomDatabase.JournalMode.TRUNCATE)
                 .build();
 
         archivedDialogDao = database.archivedDialogDao();

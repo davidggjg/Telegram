@@ -128,7 +128,7 @@ public class AyuMessageUtils {
             }
         }
 
-        if (msg.entities != null && !msg.entities.isEmpty()) {
+        if (com.radolyn.ayugram.AyuConfig.saveFormatting && msg.entities != null && !msg.entities.isEmpty()) {
             try {
                 SerializedData calc = new SerializedData(true);
                 calc.writeInt32(msg.entities.size());
@@ -148,6 +148,9 @@ public class AyuMessageUtils {
     }
 
     private static void mapMediaToBase(AyuSavePreferences prefs, AyuMessageBase base, boolean copyMedia) {
+        // Respect the per-chat-type media switches.
+        copyMedia = copyMedia && com.radolyn.ayugram.AyuConfig.shouldSaveMediaFor(
+                prefs.getAccountId(), prefs.getDialogId());
         TLRPC.Message msg = prefs.getMessage();
         if (msg == null || MessageObject.getMedia(msg) == null) {
             base.documentType = AyuConstants.DOCUMENT_TYPE_NONE;

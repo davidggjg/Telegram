@@ -9,6 +9,7 @@
 
 package com.radolyn.ayugram;
 
+import org.telegram.messenger.ChatObject;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
@@ -44,6 +45,7 @@ public class AyuConfig {
     public static boolean disableSimilarChannels;
     public static boolean hideChannelReactions;
     public static boolean localPremium;
+    public static boolean unlockTranslation;
     public static boolean regexFiltersEnabled;
     public static boolean regexFiltersInChats;
     public static boolean regexFiltersCaseInsensitive;
@@ -95,6 +97,7 @@ public class AyuConfig {
             disableSimilarChannels = preferences.getBoolean("disableSimilarChannels", false);
             hideChannelReactions = preferences.getBoolean("hideChannelReactions", false);
             localPremium = preferences.getBoolean("localPremium", true);
+            unlockTranslation = preferences.getBoolean("unlockTranslation", true);
             regexFiltersEnabled = preferences.getBoolean("regexFiltersEnabled", false);
             regexFiltersInChats = preferences.getBoolean("regexFiltersInChats", false);
             regexFiltersCaseInsensitive = preferences.getBoolean("regexFiltersCaseInsensitive", true);
@@ -127,6 +130,29 @@ public class AyuConfig {
         }
 
         return !user.bot || AyuConfig.saveForBots;
+    }
+
+    /**
+     * Whether a message's media should be copied into the archive for this
+     * dialog. The five "save media in ..." switches had nothing reading them,
+     * so the whole Message Saving screen changed values and affected nothing.
+     */
+    public static boolean shouldSaveMediaFor(int accountId, long dialogId) {
+        if (!saveMedia) {
+            return false;
+        }
+        if (dialogId >= 0) {
+            return saveMediaInPrivateChats;
+        }
+        TLRPC.Chat chat = MessagesController.getInstance(accountId).getChat(-dialogId);
+        if (chat == null) {
+            return true;
+        }
+        boolean isPublic = !android.text.TextUtils.isEmpty(ChatObject.getPublicUsername(chat));
+        if (ChatObject.isChannelAndNotMegaGroup(chat)) {
+            return isPublic ? saveMediaInPublicChannels : saveMediaInPrivateChannels;
+        }
+        return isPublic ? saveMediaInPublicGroups : saveMediaInPrivateGroups;
     }
 
     public static boolean saveEditedMessageFor(int accountId, long dialogId) {

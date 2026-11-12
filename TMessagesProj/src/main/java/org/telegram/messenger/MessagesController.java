@@ -766,11 +766,14 @@ public class MessagesController extends BaseController implements NotificationCe
     public boolean giftAttachMenuIcon;
     public boolean giftTextFieldIcon;
 
+    // VortexGram: Telegram sends "disabled" in the app config for some
+    // accounts and regions, switching translation off before the Premium check
+    // is even reached. The setting ignores that.
     public boolean isTranslationsManualEnabled() {
-        return !"disabled".equals(translationsManualEnabled);
+        return com.radolyn.ayugram.AyuConfig.unlockTranslation || !"disabled".equals(translationsManualEnabled);
     }
     public boolean isTranslationsAutoEnabled() {
-        return !"disabled".equals(translationsAutoEnabled);
+        return com.radolyn.ayugram.AyuConfig.unlockTranslation || !"disabled".equals(translationsAutoEnabled);
     }
 
     public final AppGlobalConfig config = new AppGlobalConfig();

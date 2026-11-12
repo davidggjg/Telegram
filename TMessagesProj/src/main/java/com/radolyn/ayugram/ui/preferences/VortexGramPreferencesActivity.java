@@ -42,6 +42,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
 
     private int qolHeaderRow;
     private int keepAliveServiceRow;
+    private int unlockTranslationRow;
+    private int killAppRow;
     private int disableAdsRow;
     private int backgroundTransfersRow;
     private int archiveLeftChatsRow;
@@ -64,6 +66,29 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int buttonsDividerRow;
     private int clearAyuDatabaseBtnRow;
 
+    /**
+     * Shuts VortexGram down completely: closes the connections, stops the
+     * services and ends the process, rather than leaving it running in the
+     * background the way the back button does.
+     */
+    private void killApp() {
+        try {
+            ConnectionsManager.getInstance(currentAccount).setAppPaused(true, false);
+        } catch (Exception ignored) {
+        }
+        try {
+            ApplicationLoader.applicationContext.stopService(
+                    new android.content.Intent(ApplicationLoader.applicationContext, NotificationsService.class));
+        } catch (Exception ignored) {
+        }
+        if (getParentActivity() != null) {
+            getParentActivity().finishAffinity();
+        }
+        AndroidUtilities.runOnUIThread(() -> {
+            System.exit(0);
+        }, 150);
+    }
+
     @Override
     protected void updateRowsId() {
         super.updateRowsId();
@@ -77,6 +102,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
 
         qolHeaderRow = newRow();
         keepAliveServiceRow = newRow();
+        unlockTranslationRow = newRow();
         disableAdsRow = newRow();
         backgroundTransfersRow = newRow();
         archiveLeftChatsRow = newRow();
@@ -97,6 +123,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         debugHeaderRow = newRow();
         WALModeRow = newRow();
         buttonsDividerRow = newRow();
+        killAppRow = newRow();
         clearAyuDatabaseBtnRow = newRow();
     }
 
@@ -127,6 +154,16 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == keepAliveServiceRow) {
             AyuConfig.editor.putBoolean("keepAliveService", AyuConfig.keepAliveService ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.keepAliveService);
+            // Storing our own flag did nothing: the connection is held open by
+            // Telegram's push service, so drive that.
+            MessagesController.getNotificationsSettings(currentAccount).edit()
+                    .putBoolean("pushService", AyuConfig.keepAliveService).commit();
+            ApplicationLoader.startPushService();
+        } else if (position == unlockTranslationRow) {
+            AyuConfig.editor.putBoolean("unlockTranslation", AyuConfig.unlockTranslation ^= true).apply();
+            ((TextCheckCell) view).setChecked(AyuConfig.unlockTranslation);
+        } else if (position == killAppRow) {
+            killApp();
         } else if (position == disableAdsRow) {
             AyuConfig.editor.putBoolean("disableAds", AyuConfig.disableAds ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.disableAds);
@@ -225,6 +262,9 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndValue(LocaleController.getString(R.string.DeletedMarkText), AyuConfig.getDeletedMark(), true);
                     } else if (position == editedMarkTextRow) {
                         textCell.setTextAndValue(LocaleController.getString(R.string.EditedMarkText), AyuConfig.getEditedMark(), true);
+                    } else if (position == killAppRow) {
+                        textCell.setTextAndIcon(LocaleController.getString(R.string.KillApp), R.drawable.msg_block2, true);
+                        textCell.setColors(Theme.key_text_RedBold, Theme.key_text_RedBold);
                     } else if (position == clearAyuDatabaseBtnRow) {
                         java.io.File file = ApplicationLoader.applicationContext.getDatabasePath(AyuConstants.AYU_DATABASE);
                         long size = file.exists() ? file.length() : 0;
@@ -254,6 +294,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.SaveMessagesHistory), AyuConfig.saveMessagesHistory, false);
                     } else if (position == keepAliveServiceRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.KeepAliveService), AyuConfig.keepAliveService, true);
+                    } else if (position == unlockTranslationRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString(R.string.UnlockTranslation), AyuConfig.unlockTranslation, true);
                     } else if (position == disableAdsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString(R.string.DisableAds), AyuConfig.disableAds, true);
                     } else if (position == backgroundTransfersRow) {
@@ -310,6 +352,7 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                             position == messageSavingBtnRow ||
                             position == deletedMarkTextRow ||
                             position == editedMarkTextRow ||
+                            position == killAppRow ||
                             position == clearAyuDatabaseBtnRow
             ) {
                 return 2;

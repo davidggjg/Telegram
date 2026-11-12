@@ -91,7 +91,10 @@ public class TranslateController extends BaseController {
     }
 
     public boolean isFeatureAvailable() {
-        return isChatTranslateEnabled() && UserConfig.getInstance(currentAccount).isPremium();
+        // VortexGram: chat translation is Premium-only upstream.
+        return isChatTranslateEnabled()
+                && (com.radolyn.ayugram.AyuConfig.unlockTranslation
+                    || UserConfig.getInstance(currentAccount).isPremium());
     }
 
     public boolean isFeatureAvailable(long dialogId) {
@@ -100,6 +103,7 @@ public class TranslateController extends BaseController {
         }
         final TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
         return (
+            com.radolyn.ayugram.AyuConfig.unlockTranslation ||
             UserConfig.getInstance(currentAccount).isPremium() ||
             chat != null && chat.autotranslation
         );
