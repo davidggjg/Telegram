@@ -14,7 +14,6 @@
 package com.radolyn.ayugram.messages;
 
 import com.radolyn.ayugram.database.entities.ArchivedDialog;
-import com.radolyn.ayugram.services.VortexTransferService;
 
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
@@ -209,25 +208,45 @@ public class AyuBulkDownloader {
     }
 
     /**
-     * Waits for the download queue to drain, then archives the whole set again
-     * so the entries point at the files that have since landed on disk.
+     * Waits for the downloads to land, then archives the whole set again so the
+     * entries point at the files now on disk.
+     *
+     * Progress is judged by whether each file actually exists, not by matching
+     * loader file names: the name is derived in two places, and if the two ever
+     * disagree the wait ends immediately and the archive records no media at
+     * all. Asking the filesystem cannot drift.
      */
     private static void finish(int accountId, long dialogId, List<String> queuedFiles,
                                List<TLRPC.Message> allMessages) {
         final long startedAt = System.currentTimeMillis();
         Utilities.globalQueue.postRunnable(new Runnable() {
+            private int lastRemaining = -1;
+            private long lastProgressAt = System.currentTimeMillis();
+
             @Override
             public void run() {
-                boolean stillGoing = false;
-                synchronized (queuedFiles) {
-                    for (String fileName : queuedFiles) {
-                        if (VortexTransferService.isDownloading(fileName)) {
-                            stillGoing = true;
-                            break;
+                int remaining = 0;
+                ArrayList<TLRPC.Message> pending;
+                synchronized (allMessages) {
+                    pending = new ArrayList<>(allMessages);
+                }
+                for (TLRPC.Message message : pending) {
+                    try {
+                        java.io.File f = FileLoader.getInstance(accountId).getPathToMessage(message);
+                        if (f == null || !f.exists()) {
+                            remaining++;
                         }
+                    } catch (Exception ignored) {
                     }
                 }
-                if (stillGoing && System.currentTimeMillis() - startedAt < WAIT_TIMEOUT_MS) {
+                if (remaining != lastRemaining) {
+                    lastRemaining = remaining;
+                    lastProgressAt = System.currentTimeMillis();
+                }
+                // Stop once everything has landed, or once nothing has landed
+                // for five minutes - the rest is not coming.
+                boolean stalled = System.currentTimeMillis() - lastProgressAt > 5L * 60 * 1000;
+                if (remaining > 0 && !stalled && System.currentTimeMillis() - startedAt < WAIT_TIMEOUT_MS) {
                     Utilities.globalQueue.postRunnable(this, 2000);
                     return;
                 }
