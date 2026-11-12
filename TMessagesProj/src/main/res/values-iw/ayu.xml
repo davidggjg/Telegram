@@ -121,4 +121,7 @@
   <!-- Extra toggles ported from the AyuGram / exteraGram builds -->
   <string name="DisableSimilarChannels">בטל ערוצים דומים</string>
   <string name="HideChannelReactions">הסתר ריאקציות בערוצים</string>
+
+  <string name="UnlockTranslation">פתח תרגום צ\'אטים</string>
+  <string name="KillApp">כבה את VortexGram</string>
 </resources>
