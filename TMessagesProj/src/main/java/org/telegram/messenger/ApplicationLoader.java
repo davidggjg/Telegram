@@ -288,6 +288,14 @@ public class ApplicationLoader extends Application {
 
         }
 
+        // VortexGram: load the settings now that there is a context. Anything
+        // that touched AyuConfig earlier left it on its defaults rather than
+        // throwing, and nothing else would have loaded it afterwards.
+        try {
+            com.radolyn.ayugram.AyuConfig.loadConfig();
+        } catch (Throwable ignore) {
+        }
+
         super.onCreate();
 
         // AndroidUtilities must be initialized before FileLog

@@ -28,9 +28,7 @@ public class AyuData {
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuDatabase.class, AyuConstants.AYU_DATABASE)
                 .allowMainThreadQueries()
                 // The WAL switch had nothing reading it, so the setting did nothing.
-                .setJournalMode(com.radolyn.ayugram.AyuConfig.WALMode
-                        ? androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
-                        : androidx.room.RoomDatabase.JournalMode.TRUNCATE)
+                .setJournalMode(resolveJournalMode())
                 .fallbackToDestructiveMigration()
                 .build();
 
@@ -56,5 +54,20 @@ public class AyuData {
         ApplicationLoader.applicationContext.deleteDatabase(AyuConstants.AYU_DATABASE);
 
         create();
+    }
+
+    /**
+     * Reading the setting must not be able to stop the database being built:
+     * this runs from a static initialiser, and an exception there would leave
+     * the class unusable for the rest of the process.
+     */
+    private static androidx.room.RoomDatabase.JournalMode resolveJournalMode() {
+        try {
+            return com.radolyn.ayugram.AyuConfig.WALMode
+                    ? androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
+                    : androidx.room.RoomDatabase.JournalMode.TRUNCATE;
+        } catch (Throwable ignored) {
+            return androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING;
+        }
     }
 }

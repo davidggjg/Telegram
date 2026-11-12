@@ -13384,6 +13384,7 @@ public class MessagesStorage extends BaseController {
         if (messages == null || messages.isEmpty()) {
             return;
         }
+        try {
         if (com.radolyn.ayugram.AyuConfig.archiveLeftChats) {
             // VortexGram: keep the archive of chats the user chose to preserve
             // up to date while they are still a member.
@@ -13391,6 +13392,8 @@ public class MessagesStorage extends BaseController {
             for (int a = 0; a < messages.size(); a++) {
                 archiveController.onMessageReceived(currentAccount, messages.get(a));
             }
+        }
+        } catch (Throwable ignored) {
         }
         if (useQueue) {
             storageQueue.postRunnable(() -> putMessagesInternal(messages, withTransaction, doNotUpdateDialogDate, downloadMask, ifNoLastMessage, mode, threadMessageId));

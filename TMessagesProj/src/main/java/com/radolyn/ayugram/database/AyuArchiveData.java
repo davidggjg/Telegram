@@ -26,9 +26,7 @@ public class AyuArchiveData {
     public static void create() {
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuArchiveDatabase.class, DATABASE_NAME)
                 .allowMainThreadQueries()
-                .setJournalMode(com.radolyn.ayugram.AyuConfig.WALMode
-                        ? androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
-                        : androidx.room.RoomDatabase.JournalMode.TRUNCATE)
+                .setJournalMode(resolveJournalMode())
                 .build();
 
         archivedDialogDao = database.archivedDialogDao();
@@ -51,5 +49,20 @@ public class AyuArchiveData {
         database.close();
         ApplicationLoader.applicationContext.deleteDatabase(DATABASE_NAME);
         create();
+    }
+
+    /**
+     * Reading the setting must not be able to stop the database being built:
+     * this runs from a static initialiser, and an exception there would leave
+     * the class unusable for the rest of the process.
+     */
+    private static androidx.room.RoomDatabase.JournalMode resolveJournalMode() {
+        try {
+            return com.radolyn.ayugram.AyuConfig.WALMode
+                    ? androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
+                    : androidx.room.RoomDatabase.JournalMode.TRUNCATE;
+        } catch (Throwable ignored) {
+            return androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING;
+        }
     }
 }

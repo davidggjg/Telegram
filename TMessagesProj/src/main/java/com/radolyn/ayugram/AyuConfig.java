@@ -70,6 +70,11 @@ public class AyuConfig {
                 return;
             }
 
+            if (ApplicationLoader.applicationContext == null) {
+                // Too early. Leave the defaults and try again on the next call;
+                // throwing here would poison this class for the whole process.
+                return;
+            }
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("ayuconfig", Activity.MODE_PRIVATE);
             editor = preferences.edit();
 
@@ -144,15 +149,19 @@ public class AyuConfig {
         if (dialogId >= 0) {
             return saveMediaInPrivateChats;
         }
-        TLRPC.Chat chat = MessagesController.getInstance(accountId).getChat(-dialogId);
-        if (chat == null) {
+        try {
+            TLRPC.Chat chat = MessagesController.getInstance(accountId).getChat(-dialogId);
+            if (chat == null) {
+                return true;
+            }
+            boolean isPublic = !android.text.TextUtils.isEmpty(ChatObject.getPublicUsername(chat));
+            if (ChatObject.isChannelAndNotMegaGroup(chat)) {
+                return isPublic ? saveMediaInPublicChannels : saveMediaInPrivateChannels;
+            }
+            return isPublic ? saveMediaInPublicGroups : saveMediaInPrivateGroups;
+        } catch (Throwable ignored) {
             return true;
         }
-        boolean isPublic = !android.text.TextUtils.isEmpty(ChatObject.getPublicUsername(chat));
-        if (ChatObject.isChannelAndNotMegaGroup(chat)) {
-            return isPublic ? saveMediaInPublicChannels : saveMediaInPrivateChannels;
-        }
-        return isPublic ? saveMediaInPublicGroups : saveMediaInPrivateGroups;
     }
 
     public static boolean saveEditedMessageFor(int accountId, long dialogId) {

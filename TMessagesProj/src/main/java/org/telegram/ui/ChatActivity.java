@@ -21361,12 +21361,16 @@ public class ChatActivity extends BaseFragment implements
         // VortexGram: put saved deleted messages back into the loaded range.
         // Without this they are recorded but never shown, so a deleted message
         // simply disappears and the feature looks like it does nothing.
-        if (com.radolyn.ayugram.AyuConfig.saveDeletedMessages && mode == MODE_DEFAULT && !messArr.isEmpty()) {
-            Pair<Integer, Integer> vortexIds = com.radolyn.ayugram.proprietary.AyuHistoryHook.getMinAndMaxIds(messArr);
-            com.radolyn.ayugram.proprietary.AyuHistoryHook.doHook(
-                    currentAccount, messArr, messagesDict,
-                    vortexIds.first, vortexIds.second,
-                    dialog_id, count, getTopicId(), isSecretChat());
+        try {
+            if (com.radolyn.ayugram.AyuConfig.saveDeletedMessages && mode == MODE_DEFAULT && !messArr.isEmpty()) {
+                Pair<Integer, Integer> vortexIds = com.radolyn.ayugram.proprietary.AyuHistoryHook.getMinAndMaxIds(messArr);
+                com.radolyn.ayugram.proprietary.AyuHistoryHook.doHook(
+                        currentAccount, messArr, messagesDict,
+                        vortexIds.first, vortexIds.second,
+                        dialog_id, count, getTopicId(), isSecretChat());
+            }
+        } catch (Throwable e) {
+            FileLog.e("VortexGram deleted-message hook", new Exception(e));
         }
         int approximateHeightSum = 0;
         if (!chatWasReset && (load_type == 2 || load_type == 1) && messArr.isEmpty() && !isCache) {
