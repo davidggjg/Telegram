@@ -619,6 +619,9 @@ public class FileLoader extends BaseController {
         }
         fileLoaderQueue.postRunnable(() -> {
             FileLoadOperation operation = loadOperationPaths.remove(fileName);
+            // VortexGram: a cancelled download must leave the foreground service
+            // too, or its notification keeps counting files forever.
+            com.radolyn.ayugram.services.VortexTransferService.onDownloadFinished(fileName);
             if (operation != null) {
                 FileLoaderPriorityQueue queue = operation.getQueue();
                 queue.cancel(operation);
@@ -642,6 +645,7 @@ public class FileLoader extends BaseController {
         }
         fileLoaderQueue.postRunnable(() -> {
             FileLoadOperation operation2 = loadOperationPaths.remove(fileName);
+            com.radolyn.ayugram.services.VortexTransferService.onDownloadFinished(fileName);
             if (operation2 != null) {
                 operation2.getQueue().cancel(operation2);
             }
@@ -697,6 +701,7 @@ public class FileLoader extends BaseController {
             }
             fileLoaderQueue.postRunnable(() -> {
                 FileLoadOperation operation = loadOperationPaths.remove(fileName);
+                com.radolyn.ayugram.services.VortexTransferService.onDownloadFinished(fileName);
                 if (operation != null) {
                     FileLoaderPriorityQueue queue = operation.getQueue();
                     queue.cancel(operation);

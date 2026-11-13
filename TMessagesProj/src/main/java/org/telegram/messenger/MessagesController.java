@@ -19526,6 +19526,9 @@ public class MessagesController extends BaseController implements NotificationCe
                 if (AyuConfig.saveEditedMessageFor(currentAccount, message.dialog_id)) {
                     TLRPC.Message oldMessageForHistory = getMessagesStorage().getMessage(message.dialog_id, message.id);
                     if (oldMessageForHistory != null) {
+                        // Same as above: the message came back from storage without a
+                        // dialog_id, so every revision was filed under dialog 0.
+                        oldMessageForHistory.dialog_id = message.dialog_id;
                         AyuSavePreferences ayuEditPrefs = new AyuSavePreferences(oldMessageForHistory, currentAccount);
                         AyuMessagesController.getInstance().onMessageEdited(ayuEditPrefs, message);
                     }
@@ -21283,9 +21286,20 @@ public class MessagesController extends BaseController implements NotificationCe
                     for (int b = 0, msgCount = arrayList.size(); b < msgCount; b++) {
                         int msgId = arrayList.get(b);
                         TLRPC.Message deletedMsg = key != 0 ? getMessagesStorage().getMessageInternal(key, msgId) : getMessagesStorage().getMessageIgnoringDialogInternal(msgId);
-                        if (deletedMsg != null && AyuConfig.saveDeletedMessageFor(deletedCurrentAccount, deletedMsg.dialog_id)) {
-                            AyuSavePreferences ayuDeletePrefs = new AyuSavePreferences(deletedMsg, deletedCurrentAccount);
-                            AyuMessagesController.getInstance().onMessageDeleted(ayuDeletePrefs);
+                        if (deletedMsg != null) {
+                            // dialog_id is not part of a message's serialised form, so a
+                            // message read back out of storage carries 0 here. Saving it
+                            // that way filed every deleted message under dialog 0, where
+                            // the lookup by real dialog id could never find it again.
+                            if (key != 0) {
+                                deletedMsg.dialog_id = key;
+                            } else if (deletedMsg.dialog_id == 0) {
+                                deletedMsg.dialog_id = MessageObject.getDialogId(deletedMsg);
+                            }
+                            if (AyuConfig.saveDeletedMessageFor(deletedCurrentAccount, deletedMsg.dialog_id)) {
+                                AyuSavePreferences ayuDeletePrefs = new AyuSavePreferences(deletedMsg, deletedCurrentAccount);
+                                AyuMessagesController.getInstance().onMessageDeleted(ayuDeletePrefs);
+                            }
                         }
                     }
 

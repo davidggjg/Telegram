@@ -76,7 +76,19 @@ public class AyuBulkDownloader {
             pending = new ArrayList<>(runningMessages);
         }
         if (accountId >= 0) {
-            FileLoader fileLoader = FileLoader.getInstance(accountId);
+            // Thousands of cancels would block the caller, which is the UI
+            // thread when this comes from the chat menu.
+            Utilities.globalQueue.postRunnable(() -> cancelQueued(accountId, pending));
+        }
+        running = false;
+        runningMessages.clear();
+        runningAccount = -1;
+        return true;
+    }
+
+    private static void cancelQueued(int accountId, List<TLRPC.Message> pending) {
+        FileLoader fileLoader = FileLoader.getInstance(accountId);
+        {
             for (TLRPC.Message message : pending) {
                 try {
                     TLRPC.Document document = MessageObject.getDocument(message);
@@ -98,10 +110,6 @@ public class AyuBulkDownloader {
                 }
             }
         }
-        running = false;
-        runningMessages.clear();
-        runningAccount = -1;
-        return true;
     }
 
     /**
