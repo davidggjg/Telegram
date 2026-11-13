@@ -124,4 +124,7 @@
 
   <string name="UnlockTranslation">פתח תרגום צ\'אטים</string>
   <string name="KillApp">כבה את VortexGram</string>
+
+  <string name="VortexDownloadAllStop">עצור את ההורדה</string>
+  <string name="VortexDownloadAllStopped">ההורדה נעצרה. מה שהספיק לרדת נשמר</string>
 </resources>

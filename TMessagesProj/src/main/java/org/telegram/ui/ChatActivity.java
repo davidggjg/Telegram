@@ -4526,6 +4526,7 @@ public class ChatActivity extends BaseFragment implements
                 // VortexGram: capture now, so the history survives being removed later.
                 headerItem.lazilyAddSubItem(vortex_archive_chat, R.drawable.msg_archive, LocaleController.getString(R.string.VortexArchiveThisChat));
                 headerItem.lazilyAddSubItem(vortex_download_all_media, R.drawable.msg_download, LocaleController.getString(R.string.VortexDownloadAllMedia));
+                updateBulkDownloadMenuItem();
             }
             if (ChatObject.isBoostSupported(currentChat) && (getUserConfig().isPremium() || ChatObject.isBoosted(chatInfo) || ChatObject.hasAdminRights(currentChat))) {
                 RLottieDrawable drawable = new RLottieDrawable(R.raw.boosts, dp(24), dp(24));
@@ -25326,14 +25327,38 @@ public class ChatActivity extends BaseFragment implements
      * that removes you after a few seconds, a confirmation dialog costs more
      * time than the whole run has.
      */
+    /**
+     * Keeps the menu entry showing what the next tap does: start a run, or
+     * stop the one in flight.
+     */
+    private void updateBulkDownloadMenuItem() {
+        try {
+            if (headerItem == null) {
+                return;
+            }
+            boolean busy = com.radolyn.ayugram.messages.AyuBulkDownloader.isRunning();
+            View item = headerItem.getSubItem(vortex_download_all_media);
+            if (item instanceof ActionBarMenuSubItem) {
+                ((ActionBarMenuSubItem) item).setTextAndIcon(LocaleController.getString(
+                        busy ? R.string.VortexDownloadAllStop : R.string.VortexDownloadAllMedia),
+                        R.drawable.msg_download);
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
     private void startBulkMediaDownload() {
         if (getParentActivity() == null || currentChat == null) {
             return;
         }
         if (com.radolyn.ayugram.messages.AyuBulkDownloader.isRunning()) {
+            // Second tap stops the run. Whatever has already landed is kept.
+            com.radolyn.ayugram.messages.AyuBulkDownloader.cancel();
             BulletinFactory.of(ChatActivity.this)
-                    .createErrorBulletin(LocaleController.getString(R.string.VortexDownloadAllRunning))
+                    .createSimpleBulletin(R.raw.chats_archive,
+                            LocaleController.getString(R.string.VortexDownloadAllStopped))
                     .show();
+            updateBulkDownloadMenuItem();
             return;
         }
         BulletinFactory.of(ChatActivity.this)

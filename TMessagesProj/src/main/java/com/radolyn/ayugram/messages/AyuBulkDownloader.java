@@ -40,6 +40,11 @@ public class AyuBulkDownloader {
     private static final long WAIT_TIMEOUT_MS = 6L * 60 * 60 * 1000;
 
     private static volatile boolean running;
+    private static volatile boolean cancelled;
+    /** The account and messages of the run in flight, so it can be stopped. */
+    private static volatile int runningAccount = -1;
+    private static final List<TLRPC.Message> runningMessages =
+            Collections.synchronizedList(new ArrayList<>());
 
     public interface Listener {
         /** Media found so far; called as each page lands. */
@@ -53,6 +58,53 @@ public class AyuBulkDownloader {
     }
 
     /**
+     * Stops a run: no further index pages are requested, everything already
+     * queued is taken back out of the loader, and the archive keeps whatever
+     * had landed by then.
+     *
+     * @return false if nothing was running
+     */
+    public static boolean cancel() {
+        if (!running) {
+            return false;
+        }
+        cancelled = true;
+
+        final int accountId = runningAccount;
+        ArrayList<TLRPC.Message> pending;
+        synchronized (runningMessages) {
+            pending = new ArrayList<>(runningMessages);
+        }
+        if (accountId >= 0) {
+            FileLoader fileLoader = FileLoader.getInstance(accountId);
+            for (TLRPC.Message message : pending) {
+                try {
+                    TLRPC.Document document = MessageObject.getDocument(message);
+                    if (document != null) {
+                        // Keep what already came down; only stop fetching more.
+                        fileLoader.cancelLoadFile(document, false);
+                        continue;
+                    }
+                    TLRPC.MessageMedia media = MessageObject.getMedia(message);
+                    TLRPC.Photo photo = media != null ? media.photo : null;
+                    if (photo != null) {
+                        TLRPC.PhotoSize size =
+                                FileLoader.getClosestPhotoSizeWithSize(photo.sizes, Integer.MAX_VALUE);
+                        if (size != null) {
+                            fileLoader.cancelLoadFile(size, false);
+                        }
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        running = false;
+        runningMessages.clear();
+        runningAccount = -1;
+        return true;
+    }
+
+    /**
      * Starts immediately: no scan-then-confirm round trip, because in a chat
      * that removes you after ten seconds that round trip is the whole budget.
      */
@@ -61,6 +113,9 @@ public class AyuBulkDownloader {
             return;
         }
         running = true;
+        cancelled = false;
+        runningAccount = accountId;
+        runningMessages.clear();
 
         // Before any network call: keep whatever is already on the device. If
         // access is lost one second from now, this much is still saved.
@@ -75,6 +130,9 @@ public class AyuBulkDownloader {
         final List<TLRPC.Message> allMessages = Collections.synchronizedList(new ArrayList<>());
 
         requestPage(accountId, dialogId, 0, 0, firstPage -> {
+            if (cancelled) {
+                return;
+            }
             if (firstPage == null) {
                 running = false;
                 if (listener != null) {
@@ -104,14 +162,22 @@ public class AyuBulkDownloader {
             final AtomicInteger outstanding = new AtomicInteger(remainingPages);
             for (int page = 1; page <= remainingPages; page++) {
                 final int addOffset = page * PAGE_SIZE;
-                Runnable fire = () -> requestPage(accountId, dialogId, 0, addOffset, res -> {
-                    if (res != null) {
-                        handlePage(accountId, dialogId, res, queuedFiles, allMessages, listener);
+                Runnable fire = () -> {
+                    if (cancelled) {
+                        return;
                     }
-                    if (outstanding.decrementAndGet() <= 0) {
-                        finish(accountId, dialogId, queuedFiles, allMessages);
-                    }
-                });
+                    requestPage(accountId, dialogId, 0, addOffset, res -> {
+                        if (cancelled) {
+                            return;
+                        }
+                        if (res != null) {
+                            handlePage(accountId, dialogId, res, queuedFiles, allMessages, listener);
+                        }
+                        if (outstanding.decrementAndGet() <= 0) {
+                            finish(accountId, dialogId, queuedFiles, allMessages);
+                        }
+                    });
+                };
                 if (page <= MAX_PARALLEL_PAGES) {
                     fire.run();
                 } else {
@@ -159,8 +225,12 @@ public class AyuBulkDownloader {
             return;
         }
         allMessages.addAll(pageMessages);
+        runningMessages.addAll(pageMessages);
 
         for (TLRPC.Message message : pageMessages) {
+            if (cancelled) {
+                return;
+            }
             String fileName = queueDownload(accountId, message);
             if (fileName != null) {
                 queuedFiles.add(fileName);
@@ -238,6 +308,20 @@ public class AyuBulkDownloader {
                         }
                     } catch (Exception ignored) {
                     }
+                }
+                if (cancelled) {
+                    // Keep whatever did land, then stop.
+                    try {
+                        ArrayList<TLRPC.Message> landed;
+                        synchronized (allMessages) {
+                            landed = new ArrayList<>(allMessages);
+                        }
+                        AyuArchiveController.getInstance().archiveMessages(accountId, dialogId, landed);
+                    } catch (Exception e) {
+                        FileLog.e("AyuBulkDownloader.finish cancelled", e);
+                    }
+                    running = false;
+                    return;
                 }
                 if (remaining != lastRemaining) {
                     lastRemaining = remaining;
