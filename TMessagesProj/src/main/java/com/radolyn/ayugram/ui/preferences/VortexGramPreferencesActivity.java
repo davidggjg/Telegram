@@ -20,6 +20,7 @@ import com.radolyn.ayugram.AyuConstants;
 import com.radolyn.ayugram.database.AyuData;
 import com.radolyn.ayugram.ui.preferences.utils.AyuUi;
 import org.telegram.messenger.*;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.*;
 import org.telegram.ui.Components.BulletinFactory;
@@ -43,6 +44,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
     private int qolHeaderRow;
     private int keepAliveServiceRow;
     private int unlockTranslationRow;
+    private int forwardBatchSizeRow;
+    private int forwardBatchDelayRow;
     private int killAppRow;
     private int disableAdsRow;
     private int backgroundTransfersRow;
@@ -71,6 +74,28 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
      * services and ends the process, rather than leaving it running in the
      * background the way the back button does.
      */
+    private interface NumberPicked {
+        void onPicked(int value);
+    }
+
+    /** Small list dialog, so a value can be chosen without typing. */
+    private void pickNumber(int titleRes, int[] values, NumberPicked callback) {
+        if (getParentActivity() == null) {
+            return;
+        }
+        CharSequence[] labels = new CharSequence[values.length];
+        for (int a = 0; a < values.length; a++) {
+            labels[a] = values[a] == 0
+                    ? LocaleController.getString(R.string.ForwardBatchOff)
+                    : String.valueOf(values[a]);
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LocaleController.getString(titleRes));
+        builder.setItems(labels, (dialog, which) -> callback.onPicked(values[which]));
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        showDialog(builder.create());
+    }
+
     private void killApp() {
         try {
             org.telegram.tgnet.ConnectionsManager.getInstance(currentAccount).setAppPaused(true, false);
@@ -103,6 +128,8 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         qolHeaderRow = newRow();
         keepAliveServiceRow = newRow();
         unlockTranslationRow = newRow();
+        forwardBatchSizeRow = newRow();
+        forwardBatchDelayRow = newRow();
         disableAdsRow = newRow();
         backgroundTransfersRow = newRow();
         archiveLeftChatsRow = newRow();
@@ -162,6 +189,18 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == unlockTranslationRow) {
             AyuConfig.editor.putBoolean("unlockTranslation", AyuConfig.unlockTranslation ^= true).apply();
             ((TextCheckCell) view).setChecked(AyuConfig.unlockTranslation);
+        } else if (position == forwardBatchSizeRow) {
+            pickNumber(R.string.ForwardBatchSize, new int[]{0, 10, 20, 30, 50, 100},
+                    value -> {
+                        AyuConfig.editor.putInt("forwardBatchSize", AyuConfig.forwardBatchSize = value).apply();
+                        listAdapter.notifyItemChanged(forwardBatchSizeRow);
+                    });
+        } else if (position == forwardBatchDelayRow) {
+            pickNumber(R.string.ForwardBatchDelay, new int[]{0, 5, 10, 20, 30, 60, 120},
+                    value -> {
+                        AyuConfig.editor.putInt("forwardBatchDelaySeconds", AyuConfig.forwardBatchDelaySeconds = value).apply();
+                        listAdapter.notifyItemChanged(forwardBatchDelayRow);
+                    });
         } else if (position == killAppRow) {
             killApp();
         } else if (position == disableAdsRow) {
@@ -262,6 +301,14 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndValue(LocaleController.getString(R.string.DeletedMarkText), AyuConfig.getDeletedMark(), true);
                     } else if (position == editedMarkTextRow) {
                         textCell.setTextAndValue(LocaleController.getString(R.string.EditedMarkText), AyuConfig.getEditedMark(), true);
+                    } else if (position == forwardBatchSizeRow) {
+                        textCell.setTextAndValue(LocaleController.getString(R.string.ForwardBatchSize),
+                                AyuConfig.forwardBatchSize <= 0
+                                        ? LocaleController.getString(R.string.ForwardBatchOff)
+                                        : String.valueOf(AyuConfig.forwardBatchSize), true);
+                    } else if (position == forwardBatchDelayRow) {
+                        textCell.setTextAndValue(LocaleController.getString(R.string.ForwardBatchDelay),
+                                AyuConfig.forwardBatchDelaySeconds + "s", true);
                     } else if (position == killAppRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.KillApp), R.drawable.msg_block2, true);
                         textCell.setColors(Theme.key_text_RedBold, Theme.key_text_RedBold);
@@ -348,7 +395,9 @@ public class VortexGramPreferencesActivity extends BasePreferencesActivity {
             ) {
                 return 1;
             } else if (
-                    position == archivedChatsBtnRow ||
+                    position == forwardBatchSizeRow ||
+                            position == forwardBatchDelayRow ||
+                            position == archivedChatsBtnRow ||
                             position == messageSavingBtnRow ||
                             position == deletedMarkTextRow ||
                             position == editedMarkTextRow ||

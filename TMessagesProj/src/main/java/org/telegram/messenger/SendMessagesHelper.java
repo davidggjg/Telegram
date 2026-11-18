@@ -2223,8 +2223,25 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         }
     }
 
+    // Defaults only: both are configurable in VortexGram settings, and a size
+    // of 0 turns batching off and forwards everything in one go.
     public static final int VORTEX_FORWARD_BATCH_LIMIT = 30;
     public static final long VORTEX_FORWARD_BATCH_DELAY_MS = 30_000L;
+
+    private static int vortexBatchLimit() {
+        int size = com.radolyn.ayugram.AyuConfig.forwardBatchSize;
+        return size > 0 ? size : VORTEX_FORWARD_BATCH_LIMIT;
+    }
+
+    public static int vortexBatchDelaySeconds() {
+        int seconds = com.radolyn.ayugram.AyuConfig.forwardBatchDelaySeconds;
+        return seconds >= 0 ? seconds : 30;
+    }
+
+    private static long vortexBatchDelayMs() {
+        int seconds = com.radolyn.ayugram.AyuConfig.forwardBatchDelaySeconds;
+        return seconds >= 0 ? seconds * 1000L : VORTEX_FORWARD_BATCH_DELAY_MS;
+    }
 
     // VortexGram: sends `messages` in batches of VORTEX_FORWARD_BATCH_LIMIT, waiting
     // VORTEX_FORWARD_BATCH_DELAY_MS between batches, and reports progress via Toast.
@@ -2243,20 +2260,23 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         MessageSuggestionParams suggestionParams
     ) {
         int total = messages.size();
-        int totalBatches = (int) Math.ceil(total / (double) VORTEX_FORWARD_BATCH_LIMIT);
+        final int batchLimit = vortexBatchLimit();
+        final long batchDelayMs = vortexBatchDelayMs();
+        int totalBatches = (int) Math.ceil(total / (double) batchLimit);
         Handler handler = new Handler(Looper.getMainLooper());
 
         String initMsg = totalBatches == 1
                 ? "שולח " + total + " הודעות..."
-                : "שולח " + total + " הודעות | " + totalBatches + " נגלות, 30 שניות בין כל נגלה";
+                : "שולח " + total + " הודעות | " + totalBatches + " נגלות, "
+                  + (batchDelayMs / 1000) + " שניות בין כל נגלה";
         handler.post(() -> Toast.makeText(ApplicationLoader.applicationContext, initMsg, Toast.LENGTH_LONG).show());
 
-        for (int i = 0; i < total; i += VORTEX_FORWARD_BATCH_LIMIT) {
-            final int batchNum = (i / VORTEX_FORWARD_BATCH_LIMIT) + 1;
+        for (int i = 0; i < total; i += batchLimit) {
+            final int batchNum = (i / batchLimit) + 1;
             final ArrayList<MessageObject> batch = new ArrayList<>(
-                    messages.subList(i, Math.min(i + VORTEX_FORWARD_BATCH_LIMIT, total)));
-            final int sentAfter = Math.min(i + VORTEX_FORWARD_BATCH_LIMIT, total);
-            final long delayMs = (long) (batchNum - 1) * VORTEX_FORWARD_BATCH_DELAY_MS;
+                    messages.subList(i, Math.min(i + batchLimit, total)));
+            final int sentAfter = Math.min(i + batchLimit, total);
+            final long delayMs = (long) (batchNum - 1) * batchDelayMs;
 
             handler.postDelayed(() -> {
                 String progress = "נגלה " + batchNum + "/" + totalBatches + " — שולח " + batch.size() + " הודעות";
@@ -2297,9 +2317,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         if (messages == null || messages.isEmpty()) {
             return 0;
         }
-        // VortexGram: forwards larger than VORTEX_FORWARD_BATCH_LIMIT are rate-limited into
-        // delayed batches instead of being sent (and rejected/flooded) all at once.
-        if (messages.size() > VORTEX_FORWARD_BATCH_LIMIT) {
+        // VortexGram: a large forward is rate-limited into delayed batches
+        // instead of being sent - and flood-waited - all at once. A batch size
+        // of 0 in settings turns this off and sends everything in one go.
+        if (com.radolyn.ayugram.AyuConfig.forwardBatchSize > 0
+                && messages.size() > com.radolyn.ayugram.AyuConfig.forwardBatchSize) {
             vortexBatchForward(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams);
             return 0;
         }

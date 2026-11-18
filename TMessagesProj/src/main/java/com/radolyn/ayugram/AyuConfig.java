@@ -46,6 +46,9 @@ public class AyuConfig {
     public static boolean hideChannelReactions;
     public static boolean localPremium;
     public static boolean unlockTranslation;
+    /** 0 forwards everything in one go, with no batching at all. */
+    public static int forwardBatchSize;
+    public static int forwardBatchDelaySeconds;
     public static boolean regexFiltersEnabled;
     public static boolean regexFiltersInChats;
     public static boolean regexFiltersCaseInsensitive;
@@ -103,6 +106,8 @@ public class AyuConfig {
             hideChannelReactions = preferences.getBoolean("hideChannelReactions", false);
             localPremium = preferences.getBoolean("localPremium", true);
             unlockTranslation = preferences.getBoolean("unlockTranslation", true);
+            forwardBatchSize = preferences.getInt("forwardBatchSize", 30);
+            forwardBatchDelaySeconds = preferences.getInt("forwardBatchDelaySeconds", 30);
             regexFiltersEnabled = preferences.getBoolean("regexFiltersEnabled", false);
             regexFiltersInChats = preferences.getBoolean("regexFiltersInChats", false);
             regexFiltersCaseInsensitive = preferences.getBoolean("regexFiltersCaseInsensitive", true);

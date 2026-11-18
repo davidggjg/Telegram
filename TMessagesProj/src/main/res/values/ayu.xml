@@ -101,4 +101,8 @@
 
   <string name="VortexDownloadAllStop">עצור את ההורדה</string>
   <string name="VortexDownloadAllStopped">ההורדה נעצרה. מה שהספיק לרדת נשמר</string>
+
+  <string name="ForwardBatchSize">הודעות בכל נגלה</string>
+  <string name="ForwardBatchDelay">שניות בין נגלות</string>
+  <string name="ForwardBatchOff">כבוי</string>
 </resources>

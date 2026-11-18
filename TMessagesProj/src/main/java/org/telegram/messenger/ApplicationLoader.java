@@ -288,6 +288,13 @@ public class ApplicationLoader extends Application {
 
         }
 
+        // VortexGram: record crashes to a file first, so a crash that happens
+        // during start-up is still captured.
+        try {
+            com.radolyn.ayugram.utils.AyuCrashLogger.install();
+        } catch (Throwable ignore) {
+        }
+
         // VortexGram: load the settings now that there is a context. Anything
         // that touched AyuConfig earlier left it on its defaults rather than
         // throwing, and nothing else would have loaded it afterwards.
