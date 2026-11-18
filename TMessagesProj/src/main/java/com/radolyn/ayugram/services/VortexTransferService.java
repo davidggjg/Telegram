@@ -38,6 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VortexTransferService extends Service {
 
     private static final int NOTIFICATION_ID = 38001;
+    /** Transfers shorter than this never get a foreground service. */
+    private static final long START_DELAY_MS = 3000;
 
     /** Names of the files currently downloading. */
     private static final Set<String> activeDownloads =
@@ -98,8 +100,16 @@ public class VortexTransferService extends Service {
             return;
         }
         running = shouldRun;
+        // Avatars and thumbnails finish in milliseconds. Starting a foreground
+        // service for each one is pointless churn, so wait a moment and only
+        // start if the transfer is genuinely still going.
+        long delay = shouldRun ? START_DELAY_MS : 0;
         AndroidUtilities.runOnUIThread(() -> {
             try {
+                if (shouldRun && activeDownloads.isEmpty() && activeUploads.isEmpty()) {
+                    running = false;
+                    return;
+                }
                 Intent intent = new Intent(ApplicationLoader.applicationContext, VortexTransferService.class);
                 if (shouldRun) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -117,7 +127,7 @@ public class VortexTransferService extends Service {
                 running = false;
                 FileLog.e("VortexTransferService.sync", new Exception(e));
             }
-        });
+        }, delay);
     }
 
     private static void requestUpdate() {
@@ -137,11 +147,24 @@ public class VortexTransferService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         current = this;
-        if (activeDownloads.isEmpty() && activeUploads.isEmpty()) {
+        // startForegroundService() promises Android that startForeground() will
+        // follow within a few seconds; break that promise and the system kills
+        // the process. Returning early when the transfer had already finished
+        // broke it every time, which is why opening a screen that loads avatars
+        // or thumbnails crashed the app seconds later. Always honour it first,
+        // then stop if there is nothing left to show.
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification());
+        } catch (Throwable e) {
+            FileLog.e("VortexTransferService.startForeground", new Exception(e));
+            running = false;
             stopSelf();
             return START_NOT_STICKY;
         }
-        startForeground(NOTIFICATION_ID, buildNotification());
+        if (activeDownloads.isEmpty() && activeUploads.isEmpty()) {
+            running = false;
+            stopSelf();
+        }
         return START_NOT_STICKY;
     }
 
